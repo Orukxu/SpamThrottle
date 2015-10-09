@@ -1,1 +1,7 @@
-stub
+## Interface: 11200
+## Title: SpamThrottle
+## Notes: Eliminates unnecessary and annoying chat messages
+## Author: Mopar
+## Version: Vanilla_1.6
+## SavedVariables: SpamThrottle_Config SpamThrottle_KeywordFilterList SpamThrottle_PlayerFilterList SpamThrottle_PlayerBanTime
+SpamThrottle.xml
