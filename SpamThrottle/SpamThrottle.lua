@@ -59,7 +59,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower" }
+Default_SpamThrottle_KeywordFilterList = { "cheaper gold and lvl", "anal", "gold4mmo", "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower" }
 
 Default_SpamThrottle_PlayerFilterList = {}
 
