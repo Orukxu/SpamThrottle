@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.6";
+SpamThrottleProp.Version = "Vanilla_1.7";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -31,7 +31,7 @@ SpamThrottleChatMsg = {
 	BanRemoved = "removed from your local SpamThrottle ban list";
 	Permanent = "unlimited time";
 	Timeout = "timeout";
-	WhisperBack = "Non-delivery notice: your whisper was blocked by an addon";
+	WhisperBack = "Message delivery failure: Your whisper was blocked by an addon.";
 }
 
 SpamThrottleStatusMsg = {
