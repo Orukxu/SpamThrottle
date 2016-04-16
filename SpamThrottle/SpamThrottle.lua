@@ -1,7 +1,7 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
 
-	Version:	Vanilla 1.6
+	Version:	Vanilla 1.7
 	Date:		26 September 2015
 	Author:	Mopar
 
@@ -28,6 +28,7 @@
 local DebugMsg = false;
 local ErrorMsg = true;
 local DebugMode = false;
+local BlockReportMode = false;
 
 local MessageList = {}
 local MessageCount = {}
@@ -37,6 +38,8 @@ local LastPurgeTime = time()
 local LastAuditTime = time()
 local FilteredCount = 0;
 local PlayerListAuditGap = 10;
+local DelayHookInitTime = time();
+local DelayHookReHooked;
 
 Default_SpamThrottle_Config = {
 		Version = SpamThrottleProp.Version;
@@ -59,7 +62,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okog/-\\mes", "okoga/\\/\\es", "okog/-\\/\\/\\es", "item4wow", "gold4mmo" }
 
 Default_SpamThrottle_PlayerFilterList = {}
 
@@ -816,14 +819,9 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 end
 
 --============================
---= This replaces the default ChatFrame handler with our own.
---= Implementation could conflict with other chat handling programs, but the API here is really old,
---= and was from before Chat Filters were implemented.
+--= ChatFrame_OnEvent - The main event handler
 --============================
-
-SpamThrottle_ChatFrame_OnEvent = ChatFrame_OnEvent
-
-function ChatFrame_OnEvent(event)
+function SpamThrottle_ChatFrame_OnEvent(event)
 -- arg1 is the actual message
 -- arg2 is the player name
 -- arg4 is the composite channel name (e.g. "3. global")
@@ -837,7 +835,7 @@ function ChatFrame_OnEvent(event)
 	if SpamThrottle_Config == nil then SpamThrottle_init(); end
 	
 	if not SpamThrottle_Config.STActive then
-		SpamThrottle_ChatFrame_OnEvent(event);
+		SpamThrottle_OrigChatFrame_OnEvent(event);
 		return;
 	end;
 
@@ -863,10 +861,13 @@ function ChatFrame_OnEvent(event)
 			if SpamThrottle_Config.STWispBack and event == "CHAT_MSG_WHISPER" and not SpamThrottle_Config.STReverse then
 				if BlockType == 1 or BlockType == 2 then
 					SendChatMessage(SpamThrottleChatMsg.WhisperBack, "WHISPER", nil, arg2);
+					SpamThrottleMessage(BlockReportMode, "BLOCKED [",arg4,"] {",arg2,"} ",arg1);
+					return;
 				end
 			end
 
 			if BlockType == 2 then
+				SpamThrottleMessage(BlockReportMode, "BLOCKED [",arg4,"] {",arg2,"} ",arg1);
 				return;
 			end
 			
@@ -907,8 +908,25 @@ function ChatFrame_OnEvent(event)
 	theStatusValue = string.format("%7d",FilteredCount);
 	SpamThrottleStatusValue6:SetText(theStatusValue);
 
-	SpamThrottle_ChatFrame_OnEvent(event);
+	SpamThrottle_OrigChatFrame_OnEvent(event);
 end
+
+--============================
+--= ChatFrame_DelayHook - Temporary hook for OnEvent that attempts to delay the actual hook
+--============================
+
+function SpamThrottle_ChatFrame_DelayHook(event)
+	if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then
+		if (time() - DelayHookInitTime > 5 and DelayHookReHooked == nil) then
+			ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
+			DelayHookReHooked = true;
+			SpamThrottleMessage(true, "Chat message hook is now enabled");
+		end
+	end
+	
+	SpamThrottle_OrigChatFrame_OnEvent(event);
+end
+
 
 --============================
 --= Register the Slash Command
@@ -973,6 +991,8 @@ SlashCmdList["SPTHRTL"] = function(_msg)
 	end
 end
 
+SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent
+ChatFrame_OnEvent = SpamThrottle_ChatFrame_DelayHook
+
 SLASH_SPTHRTL1 = "/spamthrottle";
 SLASH_SPTHRTL2 = "/st";
-
