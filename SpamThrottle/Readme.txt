@@ -55,7 +55,7 @@ Changes (for PRIVATE SERVER 1.12 version):
 
 	Vanilla_1.7 (16/04/2016): Intermediate update to try to make more compatible with other addons; a work in progress. Also more keywords.
 
-	Vanilla_1.8 (23/04/2016): Implemented overtook, delaying the chat handler hook for compatibility. This works now.
+	Vanilla_1.8 (23/04/2016): Implemented overhook, delaying the chat handler hook for compatibility. This works now.
 
 Acknowledgements:
 	This addon was originally inspired by ASSFilter, created by Yewbacca.
