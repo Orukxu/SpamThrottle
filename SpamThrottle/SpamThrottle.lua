@@ -1,8 +1,8 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
 
-	Version:	Vanilla 1.7
-	Date:		26 September 2015
+	Version:	Vanilla 1.8
+	Date:		23 April 2016
 	Author:	Mopar
 
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
@@ -195,6 +195,34 @@ function SpamThrottleMessage(visible, ...)
 	end
 end
 
+
+
+--============================
+--= Delay the hook of the chat messaging function
+--============================
+
+local UFStartTime = time();
+local UFInitialized;
+local UpdateFrame;
+
+function UFOverHookEvents()
+	if(time() - UFStartTime > 10 and UFInitialized == nil) then
+		SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent;
+		ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
+		SpamThrottleMessage(true,"Chat message hook is now enabled.");
+    	UFStartTime = nil;
+		UFInitialized = true;
+		this:Hide();
+      	this:SetScript("OnUpdate", nil);
+      	this = nil;
+   end
+end
+
+local UpdateFrame = CreateFrame("Frame", nil);
+UpdateFrame:SetScript("OnUpdate",UFOverHookEvents);
+UpdateFrame:RegisterEvent("OnUpdate");
+
+
 --============================
 -- Local function to normalize chat strings to avoid attempts to bypass SpamThrottle
 --============================
@@ -277,7 +305,7 @@ end
 --============================
 function SpamThrottle_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	
+UpdateFrame:Show();
 	SpamThrottleMessage(true,SpamThrottleChatMsg.WelcomeMsg);
 end
 
@@ -911,22 +939,6 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 	SpamThrottle_OrigChatFrame_OnEvent(event);
 end
 
---============================
---= ChatFrame_DelayHook - Temporary hook for OnEvent that attempts to delay the actual hook
---============================
-
-function SpamThrottle_ChatFrame_DelayHook(event)
-	if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then
-		if (time() - DelayHookInitTime > 5 and DelayHookReHooked == nil) then
-			ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
-			DelayHookReHooked = true;
-			SpamThrottleMessage(true, "Chat message hook is now enabled");
-		end
-	end
-	
-	SpamThrottle_OrigChatFrame_OnEvent(event);
-end
-
 
 --============================
 --= Register the Slash Command
@@ -990,9 +1002,6 @@ SlashCmdList["SPTHRTL"] = function(_msg)
 		end
 	end
 end
-
-SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent
-ChatFrame_OnEvent = SpamThrottle_ChatFrame_DelayHook
 
 SLASH_SPTHRTL1 = "/spamthrottle";
 SLASH_SPTHRTL2 = "/st";
