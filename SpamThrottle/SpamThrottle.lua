@@ -237,7 +237,10 @@ local function SpamThrottle_strNorm(msg, Author)
 		return string.upper(Author) .. msg;
 	end
 
-	Nmsg = string.gsub(msg,"0","O");
+	Nmsg = string.gsub(msg,"\\/\\/","W");
+	Nmsg = string.gsub(Nmsg,"/\\/\\","M");
+	Nmsg = string.gsub(Nmsg,"/-\\","A");
+	Nmsg = string.gsub(Nmsg,"0","O");
 	Nmsg = string.gsub(Nmsg,"3","E");
 	Nmsg = string.gsub(Nmsg,"...hic!","");
 	Nmsg = string.gsub(Nmsg,"%d","");
