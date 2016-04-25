@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.8";
+SpamThrottleProp.Version = "Vanilla_1.9";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -51,7 +51,7 @@ SpamThrottleConfigObjectText ={
 	STDupFilter = "Remove duplicated messages until gap timeout";
 	STColor = "Color messages rather than hiding";
 	STFuzzy = "Fuzzy filter messages enabled";
-	STChinese = "Chinese character filtering enabled";
+	STChinese = "Chinese character & QQ filtering enabled";
 	STCtrlMsgs = "Control message block for chat channels";
 	STYellMsgs = "Filtering of /y (yell) messages enabled";
 	STSayMsgs = "Filtering of /s (say) messages enabled";
