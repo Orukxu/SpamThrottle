@@ -1,8 +1,8 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
 
-	Version:	Vanilla 1.8
-	Date:		23 April 2016
+	Version:	Vanilla 1.9
+	Date:		25 April 2016
 	Author:	Mopar
 
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
@@ -47,7 +47,7 @@ Default_SpamThrottle_Config = {
 		STDupFilter = true;
 		STColor = false;
 		STFuzzy = true;
-		STChinese = false;
+		STChinese = true;
 		STCtrlMsgs = false;
 		STYellMsgs = true;
 		STSayMsgs = true;
@@ -194,7 +194,6 @@ function SpamThrottleMessage(visible, ...)
 		DEFAULT_CHAT_FRAME:AddMessage("SpamThrottle: " .. table.concat (arg, " "), 0.5, 0.5, 1);
 	end
 end
-
 
 
 --============================
@@ -707,7 +706,6 @@ end
 --= RecordMessage - save it in our database
 --============================
 function SpamThrottle_RecordMessage(msg,Author)
-	
 	if (playername ~= "") then
 		local Msg = SpamThrottle_strNorm(msg,Author);
 		
@@ -722,6 +720,27 @@ function SpamThrottle_RecordMessage(msg,Author)
 			MessageCount[Msg] = MessageCount[Msg] + 1;
 		end		
 	end
+end
+
+
+--============================
+--= QQCheck - Determine if the message contains a QQ name
+--= Make sure to send it the original message
+--============================
+function SpamThrottle_QQCheck(msg,Author)
+	local testResult = false;
+	
+	if msg == nil then return false end
+	
+	if string.find(msg, "QQ[ :~%d][ :~%d][ :~%d][ :~%d][ :~%d][ :~%d][ :~%d]") then
+		testResult = true;
+	end
+	
+	if testResult then
+		SpamThrottleMessage(DebugMsg,"QQCheck flagged: (",Author,") ",msg);
+	end
+	
+	return testResult;
 end
 
 --============================
@@ -811,6 +830,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 
 	if (SpamThrottle_Config.STChinese) then
 		if (string.find(OriginalMessage,"[\228-\233]") ~=nil) then BlockFlag = true; end
+		if SpamThrottle_QQCheck(OriginalMessage,Author) then BlockFlag = true; end
 	end
 
 	MessageLatestTime[NormalizedMessage] = time();
