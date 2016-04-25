@@ -57,7 +57,7 @@ Changes (for PRIVATE SERVER 1.12 version):
 
 	Vanilla_1.8 (23/04/2016): Implemented overhook, delaying the chat handler hook for compatibility. This works now.
 
-	Vanilla_1.9 (25/04/2016): Added QQ filtering into the Chinese message filter option. If turned on, filters messages with a QQ address.
+	Vanilla_1.9 (25/04/2016): Added QQ filtering into the Chinese message filter option. If turned on, filters messages with a QQ address. Also added normalization of some obfuscated letters.
 
 Acknowledgements:
 	This addon was originally inspired by ASSFilter, created by Yewbacca.
