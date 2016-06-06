@@ -74,6 +74,14 @@ SpamThrottle_LastClickedItem = nil;
 SpamThrottle_LastClickedTable = nil;
 SpamThrottle_LastClickedValue = nil;
 
+SpamThrottle_UTF8Convert = {};
+SpamThrottle_UTF8Convert[917] = "E";
+SpamThrottle_UTF8Convert[924] = "M";
+SpamThrottle_UTF8Convert[927] = "O";
+SpamThrottle_UTF8Convert[1040] = "A";
+SpamThrottle_UTF8Convert[1050] = "K";
+SpamThrottle_UTF8Convert[1054] = "O";
+
 --============================
 --= Static Popup Dialog Definitions
 --============================
@@ -249,6 +257,31 @@ local function SpamThrottle_strNorm(msg, Author)
 	Nmsg = string.gsub(Nmsg,"%s","");
 	Nmsg = string.upper(Nmsg);
 	Nmsg = string.gsub(Nmsg,"SH","S");
+	
+	local Nlen = string.len(Nmsg);
+
+	-- The point of this is to remove UTF8 codes that represent letters
+	for i = 1, Nlen do
+		if i ~= Nlen then
+			c1 = string.byte(string.sub(Nmsg,i,i));
+			c2 = string.byte(string.sub(Nmsg,i+1,i+1));
+			
+			if c1 > 192 and c1 <= 225 then -- it's a UTF-8 2 byte code
+				p1 = c1 - math.floor(c1/32)*32;
+				p2 = c2 - math.floor(c2/64)*64;
+				p = p1*64+p2;
+				
+				if SpamThrottle_UTF8Convert[p] ~= nil then
+					Bmsg = Bmsg .. SpamThrottle_UTF8Convert[p];
+					i = i + 1;
+				else
+					Bmsg = Bmsg .. c1;
+				end
+			end
+		end
+	end
+	Nmsg = Bmsg;
+	Bmsg = "";
 
 	
 	for i = 1, string.len(Nmsg) do			-- for c in string.gmatch(Nmsg,"%u") do
@@ -813,7 +846,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 		local testval = SpamThrottle_strNorm(value,"");
 		if (string.find(NormalizedMessage,testval) ~= nil) then BlockFlag = true; end
 	end
-	
+
 	if SpamThrottle_Config.STReverse then -- Completely different processing if this is the case
 		if BlockFlag then -- we have a match with the keyword filter, let it go through.
 			return 0;
