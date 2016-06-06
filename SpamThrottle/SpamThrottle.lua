@@ -263,8 +263,10 @@ local function SpamThrottle_strNorm(msg, Author)
 	-- The point of this is to remove UTF8 codes that represent letters
 	for i = 1, Nlen do
 		if i ~= Nlen then
-			c1 = string.byte(string.sub(Nmsg,i,i));
-			c2 = string.byte(string.sub(Nmsg,i+1,i+1));
+			s1 = string.sub(Nmsg,i,i);
+			s2 = string.sub(Nmsg,i+1,i+1);
+			c1 = string.byte(s1);
+			c2 = string.byte(s2);
 			
 			if c1 > 192 and c1 <= 225 then -- it's a UTF-8 2 byte code
 				p1 = c1 - math.floor(c1/32)*32;
@@ -272,18 +274,23 @@ local function SpamThrottle_strNorm(msg, Author)
 				p = p1*64+p2;
 				
 				if SpamThrottle_UTF8Convert[p] ~= nil then
+					-- SpamThrottleMessage(true,"Got non-Nil, value=",SpamThrottle_UTF8Convert[p]);
 					Bmsg = Bmsg .. SpamThrottle_UTF8Convert[p];
 					i = i + 1;
 				else
-					Bmsg = Bmsg .. c1;
+					-- SpamThrottleMessage(true,"Got Nil");
+					Bmsg = Bmsg .. s1;
 				end
+			else
+				Bmsg = Bmsg .. s1;
 			end
+		else
+			Bmsg = Bmsg .. string.sub(Nmsg,i,i);
 		end
 	end
 	Nmsg = Bmsg;
 	Bmsg = "";
 
-	
 	for i = 1, string.len(Nmsg) do			-- for c in string.gmatch(Nmsg,"%u") do
 		c = string.sub(Nmsg,i,i)	
 		if (c ~= lastc) then
@@ -800,7 +807,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	if (SpamThrottle_Config.STActive == false or Author == UnitName("player")) then	-- If filter not active or it's our message, just let it go thru
 		return 0;
 	end
-	
+
 	if (SpamThrottle_Config.STWhiteChannel1 ~= "" or SpamThrottle_Config.STWhiteChannel2 ~= "" or SpamThrottle_Config.STWhiteChannel3 ~= "") then
 		local normChannel = SpamThrottle_strNorm(channel,"");
 		local testval1 = SpamThrottle_strNorm(SpamThrottle_Config.STWhiteChannel1,"");
