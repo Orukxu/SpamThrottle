@@ -260,7 +260,6 @@ local function SpamThrottle_strNorm(msg, Author)
 	
 	local Nlen = string.len(Nmsg);
 
-	-- The point of this is to remove UTF8 codes that represent letters
 	for i = 1, Nlen do
 		if i ~= Nlen then
 			s1 = string.sub(Nmsg,i,i);
@@ -274,11 +273,9 @@ local function SpamThrottle_strNorm(msg, Author)
 				p = p1*64+p2;
 				
 				if SpamThrottle_UTF8Convert[p] ~= nil then
-					-- SpamThrottleMessage(true,"Got non-Nil, value=",SpamThrottle_UTF8Convert[p]);
 					Bmsg = Bmsg .. SpamThrottle_UTF8Convert[p];
 					i = i + 1;
 				else
-					-- SpamThrottleMessage(true,"Got Nil");
 					Bmsg = Bmsg .. s1;
 				end
 			else
