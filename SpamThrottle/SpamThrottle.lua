@@ -1,8 +1,8 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
 
-	Version:	Vanilla 1.9
-	Date:		25 April 2016
+	Version:	Vanilla 1.9a
+	Date:		15 June 2016
 	Author:	Mopar
 
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
@@ -62,7 +62,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "item4wow", "gold4mmo", "wtsitem" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "item4wow", "gold4mmo", "wtsitem", "golddeal" }
 
 Default_SpamThrottle_PlayerFilterList = {}
 
