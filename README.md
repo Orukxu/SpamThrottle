@@ -1,4 +1,4 @@
-# SpamThrottle - version 1.9a
+# SpamThrottle - version 1.10
 
 Vanilla WoW addon to remove unwanted chat messages.
 
