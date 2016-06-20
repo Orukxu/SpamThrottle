@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.9a";
+SpamThrottleProp.Version = "Vanilla_1.10";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -17,6 +17,7 @@ SpamThrottleGlobalOptions = "Global SpamThrottle Options";
 SpamThrottleStatus = "SpamThrottle Status & Gapping";
 SpamThrottleKeywords = "Filtering Keywords";
 SpamThrottlePlayerbans = "Filtered Player Names (local bans)";
+SpamThrottleGeneralMask = "<<<----[%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d]";
 
 SpamThrottleChatMsg = {
 	WelcomeMsg = SpamThrottleProp.CleanLabel .. " for reducing chat spam (Slash commands: /spamthrottle or /st)";
