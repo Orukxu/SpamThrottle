@@ -1,13 +1,10 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-
-	Version:	Vanilla 1.9a
-	Date:		15 June 2016
+	Version:	Vanilla 1.10
+	Date:		20 June 2016
 	Author:	Mopar
-
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
-
 	Only allows a particular message to be displayed once, rather than repeated.	
 	A timeout (call the gapping value) controls how often the exact same message
 	may be repeated, and this value is settable by the user. There is also a keyword
@@ -16,10 +13,11 @@
 	
 	Also allows (optional) blocking of chat channel join/leave spam,
 	and other chat channel control messages.
-
 	Portions of this code were adapted from the following addons:
 	- SpamEraser
 	- ASSFilter
+
+	Special thanks to Github's sipertruk for multiple-chat frame handling code.
 ]]
 
 --============================
@@ -34,9 +32,16 @@ local MessageList = {}
 local MessageCount = {}
 local MessageTime = {}
 local MessageLatestTime = {}
+for i=1, NUM_CHAT_WINDOWS do
+	MessageList["ChatFrame"..i] = {}
+	MessageTime["ChatFrame"..i] = {}
+	MessageLatestTime["ChatFrame"..i] = {}
+	MessageCount["ChatFrame"..i] = {}
+end
 local LastPurgeTime = time()
 local LastAuditTime = time()
 local FilteredCount = 0;
+local UniqueCount = 0;
 local PlayerListAuditGap = 10;
 local DelayHookInitTime = time();
 local DelayHookReHooked;
@@ -107,6 +112,7 @@ SpamThrottle_UTF8Convert[tonumber("423",16)] = "Y";
 SpamThrottle_UTF8Convert[tonumber("425",16)] = "X";
 SpamThrottle_UTF8Convert[tonumber("428",16)] = "W";
 SpamThrottle_UTF8Convert[tonumber("429",16)] = "W";
+SpamThrottle_UTF8Convert[tonumber("435",16)] = "O";
 SpamThrottle_UTF8Convert[tonumber("448",16)] = "w";
 SpamThrottle_UTF8Convert[tonumber("449",16)] = "w";
 SpamThrottle_UTF8Convert[tonumber("460",16)] = "W";
@@ -322,7 +328,12 @@ local function SpamThrottle_strNorm(msg, Author)
 					Bmsg = Bmsg .. s1;
 				end
 			else
-				Bmsg = Bmsg .. s1;
+				if c1 == 151 and c2 == 139 then
+					Bmsg = Bmsg .. "O";
+					i = i + 1;
+				else
+					Bmsg = Bmsg .. s1;
+				end
 			end
 		else
 			Bmsg = Bmsg .. string.sub(Nmsg,i,i);
@@ -456,7 +467,7 @@ function SpamThrottleConfigFrame_OnShow()
 	SpamThrottleStatusValue4:SetText(theStatusValue);
 	SpamThrottleStatusValue4:Show();
 	
-	theStatusValue = string.format("%7d",table.length(MessageList));
+	theStatusValue = string.format("%7d",UniqueCount);
 	SpamThrottleStatusValue5:SetTextColor(1,1,1);
 	SpamThrottleStatusValue5:SetText(theStatusValue);
 	SpamThrottleStatusValue5:Show();
@@ -786,6 +797,39 @@ function SpamThrottle_PlayerbanList_Update()
 end
 
 --============================
+--= DecodeMessage - Print a detailed breakdown byte-by-byte of the message
+--============================
+function SpamThrottle_DecodeMessage(msg,Author)
+	local theString ="";
+	local Nlen = string.len(msg);
+	
+	for i = 1, Nlen do
+		if i ~= Nlen then
+			s1 = string.sub(msg,i,i);
+			s2 = string.sub(msg,i+1,i+1);
+			c1 = string.byte(s1);
+			c2 = string.byte(s2);
+			
+			if c1 > 192 and c1 <= 225 then -- it's a UTF-8 2 byte code
+				p1 = c1 - math.floor(c1/32)*32;
+				p2 = c2 - math.floor(c2/64)*64;
+				p = p1*64+p2;
+				
+				if SpamThrottle_UTF8Convert[p] == nil then
+					SpamThrottleMessage(true,Author,": Unhandled UTF code: ",string.format("%x",p));
+				end
+				theString = theString .. string.format("[UTF8-%x]",p);
+				i = i + 1;
+			else -- it's a normal char
+				theString = theString .. string.format("[%s-%x]",s1,c1);
+			end
+		end
+	end
+	SpamThrottleMessage(true,"Decoded:",theString);
+end
+
+
+--============================
 --= RecordMessage - save it in our database
 --============================
 function SpamThrottle_RecordMessage(msg,Author)
@@ -794,13 +838,15 @@ function SpamThrottle_RecordMessage(msg,Author)
 		
 		SpamThrottleMessage(DebugMsg,"received normalized message ",Msg);
 		
-		if (MessageList[Msg] == nil) then  -- If we have NOT seen this text before
-			MessageList[Msg] = true;
-			MessageCount[Msg] = 1;
-			MessageTime[Msg] = time();
-			MessageLatestTime[Msg] = time();
+		local frameName = this:GetName()
+		if (MessageList[frameName][Msg] == nil) then  -- If we have NOT seen this text before
+			UniqueCount = UniqueCount + 1
+			MessageList[frameName][Msg] = true;
+			MessageCount[frameName][Msg] = 1;
+			MessageTime[frameName][Msg] = time();
+			MessageLatestTime[frameName][Msg] = time();
 		else
-			MessageCount[Msg] = MessageCount[Msg] + 1;
+			MessageCount[frameName][Msg] = (MessageCount[frameName][Msg] or 0) + 1;
 		end		
 	end
 end
@@ -817,6 +863,14 @@ function SpamThrottle_QQCheck(msg,Author)
 	
 	if string.find(msg, "QQ[ :~%d][ :~%d][ :~%d][ :~%d][ :~%d][ :~%d][ :~%d]") then
 		testResult = true;
+	end
+	
+	local Nlen = string.len(msg);
+	
+	for i = 1, string.len(msg) do
+		if string.byte(string.sub(msg,i,i)) > 225 then
+			testResult = true;
+		end
 	end
 	
 	if testResult then
@@ -840,6 +894,10 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	UpperCaseMessage = string.upper(msg);
 	OriginalMessage = msg;
 	
+	-- if Author == "nameo" then
+		-- SpamThrottle_DecodeMessage(NormalizedMessage,Author);
+	-- end
+	
 	if (NormalizedMessage == nil) then	-- If no message just tell caller to block altogether
 		return 2;
 	end
@@ -862,16 +920,19 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	if time() - LastPurgeTime > SpamThrottle_Config.STGap then
 		SpamThrottleMessage(DebugMsg,"purging database to free memory");
 		LastPurgeTime = time();
-		for key, value in pairs(MessageTime) do
-			if time() - LastPurgeTime > 300 then
-				SpamThrottleMessage(DebugMsg,"Removing key ",key," as it is older than timeout.");
-				MessageList[key] = nil;
-				MessageTime[key] = nil;
-				MessageLatestTime[key] = nil;
-				MessageCount[key] = nil;
+		for i=1, NUM_CHAT_WINDOWS do
+			for key, value in pairs(MessageTime["ChatFrame"..i]) do
+				if time() - LastPurgeTime > 300 then
+					SpamThrottleMessage(DebugMsg,"Removing key ",key," as it is older than timeout.");
+					MessageList["ChatFrame"..i][key] = nil;
+					MessageTime["ChatFrame"..i][key] = nil;
+					MessageLatestTime["ChatFrame"..i][key] = nil;
+					MessageCount["ChatFrame"..i][key] = nil;
+				end
 			end
-		end		
+		end
 	end
+	if string.find(msg, SpamThrottleGeneralMask) then BlockFlag = true; end
 
 	if not SpamThrottle_Config.STBanPerm then
 		if time() - LastAuditTime > PlayerListAuditGap then
@@ -916,17 +977,18 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 		if SpamThrottle_QQCheck(OriginalMessage,Author) then BlockFlag = true; end
 	end
 
-	MessageLatestTime[NormalizedMessage] = time();
+	local frameName = this:GetName()
+	MessageLatestTime[frameName][NormalizedMessage] = time();
 
 	if (event == "CHAT_MSG_YELL" or event == "CHAT_MSG_SAY" or event == "CHAT_MSG_WHISPER") then
-		if (SpamThrottle_Config.STDupFilter and MessageList[NormalizedMessage] ~= nil) then	-- this should always be true, but worth checking to avoid an error
-			if time() - MessageTime[NormalizedMessage] <= SpamThrottle_Config.STGap then
+		if (SpamThrottle_Config.STDupFilter and MessageList[frameName][NormalizedMessage] ~= nil) then	-- this should always be true, but worth checking to avoid an error
+			if time() - MessageTime[frameName][NormalizedMessage] <= SpamThrottle_Config.STGap then
 				BlockFlag = true;
 			end
 		end
 	else -- it is a channel message, handled differently than yell msgs (or they were)
-		if (SpamThrottle_Config.STDupFilter and MessageList[NormalizedMessage] ~= nil) then	-- If duplicate message filter enabled AND we have seen this exact text before
-			if time() - MessageTime[NormalizedMessage] <= SpamThrottle_Config.STGap then
+		if (SpamThrottle_Config.STDupFilter and MessageList[frameName][NormalizedMessage] ~= nil) then	-- If duplicate message filter enabled AND we have seen this exact text before
+			if MessageTime[frameName][NormalizedMessage] and time() - MessageTime[frameName][NormalizedMessage] <= SpamThrottle_Config.STGap then
 				BlockFlag = true;
 			end
 		end
@@ -980,10 +1042,20 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 		if (event == "CHAT_MSG_CHANNEL" or (event == "CHAT_MSG_YELL" and SpamThrottle_Config.STYellMsgs) or (event == "CHAT_MSG_SAY" and SpamThrottle_Config.STSayMsgs) or (event == "CHAT_MSG_WHISPER" and SpamThrottle_Config.STWispMsgs)) then
 			
 			-- Code to handle message goes here. Just return if we are going to ignore it.
+			local channelFound
+
+			if event == "CHAT_MSG_CHANNEL" then
+				for index, value in this.channelList do
+					if ((arg7 > 0) and (this.zoneChannelList[index] == arg7)) or strupper(value) == strupper(arg9) then
+						channelFound = value
+					end
+				end
+				if not channelFound then return end
+			end
 			
 			if arg1 and arg2 then	-- only execute this code once although event handler is called many times per message
 				local NormalizedMessage = SpamThrottle_strNorm(arg1, arg2);
-				if time() == MessageLatestTime[NormalizedMessage] then return end;
+				--if time() == MessageLatestTime[NormalizedMessage] then return end;
 			end
 
 			local BlockType = SpamThrottle_ShouldBlock(arg1,arg2,event,arg9);
@@ -1027,13 +1099,13 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 					end
 				end
 				
-				DEFAULT_CHAT_FRAME:AddMessage(CleanText);
+				this:AddMessage(CleanText);
 				return;
 			end
 		end
 	end
 
-	local theStatusValue = string.format("%7d",table.length(MessageList));
+	local theStatusValue = string.format("%7d",UniqueCount);
 	SpamThrottleStatusValue5:SetText(theStatusValue);
 
 	theStatusValue = string.format("%7d",FilteredCount);
