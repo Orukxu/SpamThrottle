@@ -1,6 +1,6 @@
 SpamThrottle (Eliminates duplicated messages in chat channels)
 
-	Version:	Vanilla_1.10
+	Version:	Vanilla_1.10a
 	Date:		20 June 2016
 	Author:		Mopar
 
