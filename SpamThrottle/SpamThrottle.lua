@@ -1,6 +1,6 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.10
+	Version:	Vanilla 1.10a
 	Date:		20 June 2016
 	Author:	Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
