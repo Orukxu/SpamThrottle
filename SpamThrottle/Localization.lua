@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.10a";
+SpamThrottleProp.Version = "Vanilla_1.10b";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -23,7 +23,7 @@ SpamThrottleChatMsg = {
 	WelcomeMsg = SpamThrottleProp.CleanLabel .. " for reducing chat spam (Slash commands: /spamthrottle or /st)";
 	ObjectLoadFail = "Error! Failed to load object:";
 	ObjectSaveFail = "Error! Failed to save object:";
-	LoadDefault = "Version update detected. Options have been reset to defaults. Player ban list retained.";
+	LoadDefault = "Version update detected. Options have been reset to defaults.";
 	LoadKeywordDefault = "Keyword filtering list has been reset to defaults.";
 	LoadPlayerbanDefault = "Local player silencing list has been cleared.";
 	EnterFilterKeyword = "Enter new filtering keyword:";
