@@ -69,7 +69,7 @@ Default_SpamThrottle_Config = {
 
 Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal" }
 
-Default_SpamThrottle_PlayerFilterList = { "AFKHUNTA" }
+Default_SpamThrottle_PlayerFilterList = {};
 
 SpamThrottle_PlayerBanTime = {};
 
