@@ -929,7 +929,7 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		BlockFlag = true;
 		SpamThrottle_AddPlayerban(Author);
 		SpamThrottle_PlayerbanList_Update();
-		SpamThrottleMessage(true, "Added "..Author.." to player ban list for gold advertising");
+		SpamThrottleMessage(false, "Added "..Author.." to player ban list for gold advertising");
 	end
 	
 	return theReturn;
