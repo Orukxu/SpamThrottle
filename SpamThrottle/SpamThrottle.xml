@@ -183,7 +183,7 @@
     <!-- Config Dialog -->
 	<Frame name="SpamThrottleConfigFrame" toplevel="true" frameStrata="DIALOG" movable="true" enableMouse="true" hidden="true" parent="UIParent" enableKeyboard="true">
 		<Size>
-			<AbsDimension x="790" y="600"/>
+			<AbsDimension x="790" y="620"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER"/>
@@ -232,7 +232,7 @@
         <Frames>
 			<Frame name="SpamThrottleConfigFrameGeneral" inherits="OptionFrameBoxTemplate">
 				<Size>
-					<AbsDimension x="375" y="325"/>
+					<AbsDimension x="375" y="345"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -284,9 +284,18 @@
                             </Anchor>
                         </Anchors>
                     </CheckButton>
-                    <CheckButton name="STChinese_CheckButton" inherits="OptionsCheckButtonTemplate">
+                    <CheckButton name="STGoldSeller_CheckButton" inherits="OptionsCheckButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeTo="STFuzzy_CheckButton" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="5"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <CheckButton name="STChinese_CheckButton" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="STGoldSeller_CheckButton" relativePoint="BOTTOMLEFT">
                                 <Offset>
                                     <AbsDimension x="0" y="5"/>
                                 </Offset>
@@ -365,7 +374,7 @@
             
             <Frame name="SpamThrottleConfigFrameStatus" inherits="OptionFrameBoxTemplate">
                 <Size>
-                    <AbsDimension x="375" y="325"/>
+                    <AbsDimension x="375" y="345"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="SpamThrottleConfigFrameGeneral">
@@ -556,7 +565,7 @@
                        <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="55" y="-285"/>
+                                    <AbsDimension x="55" y="-295"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
