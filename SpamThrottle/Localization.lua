@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.10b";
+SpamThrottleProp.Version = "Vanilla_1.11";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -52,6 +52,7 @@ SpamThrottleConfigObjectText ={
 	STDupFilter = "Remove duplicated messages until gap timeout";
 	STColor = "Color messages rather than hiding";
 	STFuzzy = "Fuzzy filter messages enabled";
+	STGoldSeller = "Gold seller ad aggressive filtering enabled";
 	STChinese = "Chinese character & QQ filtering enabled";
 	STCtrlMsgs = "Control message block for chat channels";
 	STYellMsgs = "Filtering of /y (yell) messages enabled";
@@ -69,6 +70,7 @@ SpamThrottleConfigObjectTooltip ={
 	STDupFilter = "If checked, will filter duplicate messages, not allowing them to appear again until the number of seconds specified by Message Gapping has passed";
 	STColor = "If checked, filtered messages are identified by coloring them rather than hiding. You see the messages but can visually skip over them more easily.";
 	STFuzzy = "Enables fuzzy filtering which catches very similar repeated messages such as those sent by drunk characters.";
+	STGoldSeller = "Enables aggressive gold advertising filtering to remove gold ad spam.";
 	STChinese = "Filters messages containing Chinese, Korean or Japanese characters.";
 	STCtrlMsgs = "Filters channel control messages to remove joined/left channel spam.";
 	STYellMsgs = "Enables filtering of player messages yelled by nearby players";
@@ -80,3 +82,8 @@ SpamThrottleConfigObjectTooltip ={
 	STBanPerm = "If enabled, player bans stay in place until you remove them. Otherwise players will be removed automatically after the timeout expires for them.";
 	STBanTimeout = "Players will automatically be removed from this list after this amount of time if permanent ban (above) is not set.";
 }
+
+SpamThrottleGSC1 = { ">>", "<<" };
+SpamThrottleGSC2 = { "\\$" };
+SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEVELING", "LEVELLING", "LEVLING", "LVLING", "SAFE", "SERVICE", "100G", "50G" };
+SpamThrottleGSO2 = { "PRICE", "GOLD", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXXG" };
