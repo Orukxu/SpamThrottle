@@ -1,6 +1,6 @@
 SpamThrottle (Eliminates duplicated messages in chat channels)
 
-	Version:	Vanilla_1.10b
+	Version:	Vanilla_1.11
 	Date:		23 July 2016
 	Author:		Mopar
 
@@ -62,6 +62,8 @@ Changes (for PRIVATE SERVER 1.12 version):
 	Vanilla_1.9a (15/06/2016): Additional anti-obfuscation for UTF-8 2-byte characters codes masquerading as english characters. Also added another gold seller site to the default block list.
 
 	Vanilla_1.10 (20/06/2016): Added code to handle multiple windows, written by github’s sipertruk. Thanks mate! Also added some more anti-obfuscation code.
+
+	Vanilla_1.11 (17/08/2016): Added (optional) aggressive gold spam filtering
 
 Acknowledgements:
 	This addon was originally inspired by ASSFilter, created by Yewbacca.
