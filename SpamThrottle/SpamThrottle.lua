@@ -1,7 +1,7 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.10b
-	Date:		23 July 2016
+	Version:	Vanilla 1.11
+	Date:		17 August 2016
 	Author:	Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
@@ -51,6 +51,7 @@ Default_SpamThrottle_Config = {
 		STActive = true;
 		STDupFilter = true;
 		STColor = false;
+		STGoldSeller = true;
 		STFuzzy = true;
 		STChinese = true;
 		STCtrlMsgs = false;
@@ -599,6 +600,7 @@ function SpamThrottle_SetAlphas(myStatus)
 	STDupFilter_CheckButton:SetAlpha(theAlpha);	
 	STColor_CheckButton:SetAlpha(theAlpha);
 	STFuzzy_CheckButton:SetAlpha(theAlpha);
+	STGoldSeller_CheckButton:SetAlpha(theAlpha);
 	STChinese_CheckButton:SetAlpha(theAlpha);
 	STCtrlMsgs_CheckButton:SetAlpha(theAlpha);
 	STYellMsgs_CheckButton:SetAlpha(theAlpha);
@@ -611,6 +613,7 @@ function SpamThrottle_SetAlphas(myStatus)
 		STDupFilter_CheckButton:Enable();
 		STColor_CheckButton:Enable();
 		STFuzzy_CheckButton:Enable();
+		STGoldSeller_CheckButton:Enable();
 		STChinese_CheckButton:Enable();
 		STCtrlMsgs_CheckButton:Enable();
 		STYellMsgs_CheckButton:Enable();
@@ -621,6 +624,7 @@ function SpamThrottle_SetAlphas(myStatus)
 		STDupFilter_CheckButton:Disable();
 		STColor_CheckButton:Disable();
 		STFuzzy_CheckButton:Disable();
+		STGoldSeller_CheckButton:Disable();
 		STChinese_CheckButton:Disable();
 		STCtrlMsgs_CheckButton:Disable();
 		STYellMsgs_CheckButton:Disable();
@@ -883,6 +887,55 @@ function SpamThrottle_QQCheck(msg,Author)
 end
 
 --============================
+--= SpamScoreBlock - Determine the spam score and perma-block if exceeded
+--= Returns TRUE if blocked
+--= Returns FALSE if clear
+--============================
+function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
+	local theScore = 0;
+	local theThreshold = 4;
+	local BlockFlag = false;
+	
+	local index = table.find(SpamThrottle_PlayerFilterList,string.upper(Author));
+	if index then return true; end
+	
+	for key, value in pairs(SpamThrottleGSO2) do
+		local testval = SpamThrottle_strNorm(value,"");
+		if (string.find(NormalizedMessage,testval) ~= nil) then
+			theScore = theScore + 2
+		end
+	end
+	
+	for key, value in pairs(SpamThrottleGSO1) do
+		local testval = SpamThrottle_strNorm(value,"");
+		if (string.find(NormalizedMessage,testval) ~= nil) then
+			theScore = theScore + 1
+		end
+	end
+	
+	for key, value in pairs(SpamThrottleGSC2) do
+		if (string.find(msg,value) ~= nil) then
+			theScore = theScore + 2
+		end
+	end
+	
+	for key, value in pairs(SpamThrottleGSC1) do
+		if (string.find(msg,value) ~= nil) then
+			theScore = theScore + 1
+		end
+	end
+	
+	if theScore > theThreshold then
+		BlockFlag = true;
+		SpamThrottle_AddPlayerban(Author);
+		SpamThrottle_PlayerbanList_Update();
+		SpamThrottleMessage(true, "Added "..Author.." to player ban list for gold advertising");
+	end
+	
+	return theReturn;
+end
+
+--============================
 --= ShouldBlock - Determine whether message should be blocked.
 --= return = 0, don't block.
 --= return = 1, use graytext to de-emphasize
@@ -934,7 +987,10 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 			end
 		end
 	end
+	
 	if string.find(msg, SpamThrottleGeneralMask) then BlockFlag = true; end
+	
+	if SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author) then BlockFlag = true; end
 
 	if not SpamThrottle_Config.STBanPerm then
 		if time() - LastAuditTime > PlayerListAuditGap then
