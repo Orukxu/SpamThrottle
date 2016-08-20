@@ -86,4 +86,4 @@ SpamThrottleConfigObjectTooltip ={
 SpamThrottleGSC1 = { ">>", "<<" };
 SpamThrottleGSC2 = { "\\$" };
 SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEVELING", "LEVELLING", "LEVLING", "LVLING", "SAFE", "SERVICE", "100G", "50G" };
-SpamThrottleGSO2 = { "PRICE", "GOLD", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXXG" };
+SpamThrottleGSO2 = { "PRICE", "GOLD", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES" };
