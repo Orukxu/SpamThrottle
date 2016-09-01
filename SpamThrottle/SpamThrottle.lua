@@ -1,7 +1,7 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.11a
-	Date:		20 August 2016
+	Version:	Vanilla 1.11b
+	Date:		01 September 2016
 	Author:	Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
@@ -925,11 +925,19 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		end
 	end
 	
+	for key, value in pairs(SpamThrottleSWLO) do
+		local testval = SpamThrottle_strNorm(value,Author);
+		if (string.find(NormalizedMessage,testval) ~= nil and string.len(NormalizedMessage) == string.len(testval)) then
+			theScore = theScore + 100
+		end
+	end
+	
+	
 	if theScore > theThreshold then
 		BlockFlag = true;
 		SpamThrottle_AddPlayerban(Author);
 		SpamThrottle_PlayerbanList_Update();
-		SpamThrottleMessage(false, "Added "..Author.." to player ban list for gold advertising");
+		SpamThrottleMessage(true, "Added "..Author.." gold advertising: "..msg);
 	end
 	
 	return theReturn;
@@ -949,10 +957,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	UpperCaseMessage = string.upper(msg);
 	OriginalMessage = msg;
 	
-	-- if Author == "nameo" then
-		-- SpamThrottle_DecodeMessage(NormalizedMessage,Author);
-	-- end
-	
+
 	if (NormalizedMessage == nil) then	-- If no message just tell caller to block altogether
 		return 2;
 	end
