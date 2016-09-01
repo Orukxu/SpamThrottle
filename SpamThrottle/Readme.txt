@@ -1,7 +1,7 @@
 SpamThrottle (Eliminates duplicated messages in chat channels)
 
-	Version:	Vanilla_1.11a
-	Date:		20 Aug 2016
+	Version:	Vanilla_1.11b
+	Date:		01 Sep 2016
 	Author:		Mopar
 
 On many servers the Trade channel is the main LFG channel in use today. On full servers, many people spam the channel to increase the visibility of their messages (or just be a general nuisance) by making macros and repeating the message once every few minutes. And then there’s gold sellers. This means you spend more time reading crap and less time interacting with normal people.
