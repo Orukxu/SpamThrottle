@@ -937,7 +937,7 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		BlockFlag = true;
 		SpamThrottle_AddPlayerban(Author);
 		SpamThrottle_PlayerbanList_Update();
-		SpamThrottleMessage(true, "Added "..Author.." gold advertising: "..msg);
+		SpamThrottleMessage(false, "Added "..Author.." gold advertising: "..msg);
 	end
 	
 	return theReturn;
