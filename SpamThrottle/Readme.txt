@@ -1,7 +1,7 @@
 SpamThrottle (Eliminates duplicated messages in chat channels)
 
-	Version:	Vanilla_1.11b
-	Date:		01 Sep 2016
+	Version:	Vanilla_1.11c
+	Date:		12 Sep 2016
 	Author:		Mopar
 
 On many servers the Trade channel is the main LFG channel in use today. On full servers, many people spam the channel to increase the visibility of their messages (or just be a general nuisance) by making macros and repeating the message once every few minutes. And then there’s gold sellers. This means you spend more time reading crap and less time interacting with normal people.
@@ -68,4 +68,3 @@ Changes (for PRIVATE SERVER 1.12 version):
 Acknowledgements:
 	This addon was originally inspired by ASSFilter, created by Yewbacca.
 	Thanks to Tori of Blackrock for helping with some of the event handler code on the retail version.  Much appreciated!
-
