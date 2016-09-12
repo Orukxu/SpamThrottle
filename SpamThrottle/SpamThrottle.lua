@@ -1,7 +1,7 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.11b
-	Date:		01 September 2016
+	Version:	Vanilla 1.11c
+	Date:		12 September 2016
 	Author:	Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
@@ -952,6 +952,7 @@ end
 function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	local BlockFlag = false;
 	local NormalizedMessage = "";
+	
 	
 	NormalizedMessage = SpamThrottle_strNorm(msg, Author);
 	UpperCaseMessage = string.upper(msg);
