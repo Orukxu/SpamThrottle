@@ -925,6 +925,12 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		end
 	end
 	
+	for key, value in pairs(SpamThrottleGSUC5) do
+		if (string.find(string.upper(msg),value) ~= nil) then
+			theScore = theScore + 5
+		end
+	end
+
 	for key, value in pairs(SpamThrottleSWLO) do
 		local testval = SpamThrottle_strNorm(value,Author);
 		if (string.find(NormalizedMessage,testval) ~= nil and string.len(NormalizedMessage) == string.len(testval)) then
