@@ -87,4 +87,5 @@ SpamThrottleGSC1 = { ">>", "<<", "50g", "50G" };
 SpamThrottleGSC2 = { "\\$", "100", "\\\\" };
 SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEVELING", "LEVELLING", "LEVLING", "LEVILING", "LVLING", "SAFE", "SERVICE", "NOST", "COM" };
 SpamThrottleGSO2 = { "PRICE", "GOLD", "SKYPE", "EPIC", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES", "GREETINGS", "WEBSITE" };
+SpamThrottleGSUC5 = { "ITEM4" }
 SpamThrottleSWLO = { "OKO", "GAMES", "NOST", "COM" }
