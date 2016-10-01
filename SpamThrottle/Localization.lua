@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.11f";
+SpamThrottleProp.Version = "Vanilla_1.11g";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -84,7 +84,7 @@ SpamThrottleConfigObjectTooltip ={
 }
 
 SpamThrottleGSC1 = { ">>", "<<", "50g", "50G" };
-SpamThrottleGSC2 = { "\\$", "100", "\\\\" };
+SpamThrottleGSC2 = { "\\$", "100", "\\\\", "USD", "COM" };
 SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEGIT", "LEVELING", "LEVELLING", "LEVLING", "LEVILING", "LVLING", "SAFE", "SERVICE", "NOST", "COM" };
 SpamThrottleGSO2 = { "PRICE", "GOLD", "CURRENCY", "MONEY", "SKYPE", "EPIC", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES", "GREETINGS", "WEBSITE", "GOID", "CQM" };
 SpamThrottleGSUC5 = { "ITEM4" }
