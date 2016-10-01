@@ -1,7 +1,7 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.11e
-	Date:		17 September 2016
+	Version:	Vanilla 1.11f
+	Date:		29 September 2016
 	Author:	Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -943,7 +943,7 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		BlockFlag = true;
 		SpamThrottle_AddPlayerban(Author);
 		SpamThrottle_PlayerbanList_Update();
-		SpamThrottleMessage(false, "Added "..Author.." gold advertising: "..msg);
+		SpamThrottleMessage(false, "Blocked "..Author.." gold advertising: "..msg);
 	end
 	
 	return theReturn;
