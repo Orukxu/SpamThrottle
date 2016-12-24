@@ -54,7 +54,7 @@ Default_SpamThrottle_Config = {
 		STGoldSeller = true;
 		STFuzzy = true;
 		STChinese = true;
-		STCtrlMsgs = false;
+		STCtrlMsgs = true;
 		STYellMsgs = true;
 		STSayMsgs = true;
 		STWispMsgs = true;
@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "anal", "mmotank", "naxxgames", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -1102,12 +1102,12 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 		return;
 	end;
 
-	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the left/joined channel spam and a few other notification messages
-		if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
+	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the "has invited you to join the channel"-spam and the left/joined channel spam and a few other notification messages
+		if (event == "CHANNEL_INVITE_REQUEST" or event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
 			return;
 		end
 	end
-			
+
 	if arg2 then -- if this is not a server message
 		if (event == "CHAT_MSG_CHANNEL" or (event == "CHAT_MSG_YELL" and SpamThrottle_Config.STYellMsgs) or (event == "CHAT_MSG_SAY" and SpamThrottle_Config.STSayMsgs) or (event == "CHAT_MSG_WHISPER" and SpamThrottle_Config.STWispMsgs)) then
 			
