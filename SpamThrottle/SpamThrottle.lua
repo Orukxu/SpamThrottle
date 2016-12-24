@@ -54,7 +54,7 @@ Default_SpamThrottle_Config = {
 		STGoldSeller = true;
 		STFuzzy = true;
 		STChinese = true;
-		STCtrlMsgs = false;
+		STCtrlMsgs = true;
 		STYellMsgs = true;
 		STSayMsgs = true;
 		STWispMsgs = true;
@@ -1102,8 +1102,8 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 		return;
 	end;
 
-	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the left/joined channel spam and a few other notification messages
-		if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
+	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the "has invited you to join the channel"-spam and left/joined channel spam and a few other notification messages
+		if (event == "CHANNEL_INVITE_REQUEST" or event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
 			return;
 		end
 	end
