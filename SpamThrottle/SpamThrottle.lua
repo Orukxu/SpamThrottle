@@ -38,6 +38,10 @@ for i=1, NUM_CHAT_WINDOWS do
 	MessageLatestTime["ChatFrame"..i] = {}
 	MessageCount["ChatFrame"..i] = {}
 end
+MessageList["WIM_Core"] = {}
+MessageTime["WIM_Core"] = {}
+MessageLatestTime["WIM_Core"] = {}
+MessageCount["WIM_Core"] = {}
 local LastPurgeTime = time()
 local LastAuditTime = time()
 local FilteredCount = 0;
@@ -54,7 +58,7 @@ Default_SpamThrottle_Config = {
 		STGoldSeller = true;
 		STFuzzy = true;
 		STChinese = true;
-		STCtrlMsgs = false;
+		STCtrlMsgs = true;
 		STYellMsgs = true;
 		STSayMsgs = true;
 		STWispMsgs = true;
@@ -266,6 +270,10 @@ function UFOverHookEvents()
 	if(time() - UFStartTime > 10 and UFInitialized == nil) then
 		SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent;
 		ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
+		if WIM_ChatFrame_OnEvent then 
+			SpamThrottle_Orig_WIM_ChatFrame_OnEvent = WIM_ChatFrame_OnEvent;
+			WIM_ChatFrame_OnEvent = SpamThrottle_WIM_ChatFrame_OnEvent;
+		end
 		SpamThrottleMessage(true,"Chat message hook is now enabled.");
     	UFStartTime = nil;
 		UFInitialized = true;
@@ -1084,7 +1092,7 @@ end
 --============================
 --= ChatFrame_OnEvent - The main event handler
 --============================
-function SpamThrottle_ChatFrame_OnEvent(event)
+function SpamThrottle_ChatFrame_OnEvent(event, WIM_msg)
 -- arg1 is the actual message
 -- arg2 is the player name
 -- arg4 is the composite channel name (e.g. "3. global")
@@ -1098,12 +1106,17 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 	if SpamThrottle_Config == nil then SpamThrottle_init(); end
 	
 	if not SpamThrottle_Config.STActive then
+		if WIM_msg then 
+			SpamThrottle_Orig_WIM_ChatFrame_OnEvent(event)
+		else 
 		SpamThrottle_OrigChatFrame_OnEvent(event);
+		end
 		return;
 	end;
 
-	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the left/joined channel spam and a few other notification messages
-		if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
+	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the "has invited you to join the channel"-spam and left/joined channel spam and a few other notification messages
+		if (event == "CHANNEL_INVITE_REQUEST" or event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
+  			
 			return;
 		end
 	end
@@ -1180,8 +1193,16 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 
 	theStatusValue = string.format("%7d",FilteredCount);
 	SpamThrottleStatusValue6:SetText(theStatusValue);
-
+	
+	if WIM_msg then 
+		SpamThrottle_Orig_WIM_ChatFrame_OnEvent(event)
+	else 
 	SpamThrottle_OrigChatFrame_OnEvent(event);
+	end
+end
+
+function SpamThrottle_WIM_ChatFrame_OnEvent(event)
+	SpamThrottle_ChatFrame_OnEvent(event, true)
 end
 
 
