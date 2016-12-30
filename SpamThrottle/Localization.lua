@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.11h";
+SpamThrottleProp.Version = "Vanilla_1.12b";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
@@ -59,6 +59,7 @@ SpamThrottleConfigObjectText ={
 	STSayMsgs = "Filtering of /s (say) messages enabled";
 	STWispMsgs = "Filtering of /w (whisper) messages enabled";
 	STWispBack = "Auto reply if filtered";
+	STMultiWisp = "Filtering combined whispers from same player";
 	STReverse = "Display ONLY keyword matches as a whitelist";
 	STGap = "Message Gapping (seconds)";
 	STBanPerm = "Permanent";
@@ -77,6 +78,7 @@ SpamThrottleConfigObjectTooltip ={
 	STSayMsgs = "Enables filtering of player messages said by nearby players.";
 	STWispMsgs = "Enables filtering of player messages whispered to you directly.";
 	STWispBack = "Automatically responds with a polite whisper back to the player telling them their message was blocked.";
+	STMultiWisp = "Enables filtering of multiple player messages combined, whispered to you by the same player within the last few seconds.";
 	STReverse = "Reverses the sense of SpamThrottle filtering. Messages matching a keyword will be shown, all others will be blocked.";
 	STGap = "Sets the minimum required gap between repeated messages. If the gap time has not been reached for that player and message since the last one, it will be filtered.";
 	STBanPerm = "If enabled, player bans stay in place until you remove them. Otherwise players will be removed automatically after the timeout expires for them.";

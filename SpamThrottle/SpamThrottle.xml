@@ -183,7 +183,7 @@
     <!-- Config Dialog -->
 	<Frame name="SpamThrottleConfigFrame" toplevel="true" frameStrata="DIALOG" movable="true" enableMouse="true" hidden="true" parent="UIParent" enableKeyboard="true">
 		<Size>
-			<AbsDimension x="790" y="620"/>
+			<AbsDimension x="790" y="650"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER"/>
@@ -232,7 +232,7 @@
         <Frames>
 			<Frame name="SpamThrottleConfigFrameGeneral" inherits="OptionFrameBoxTemplate">
 				<Size>
-					<AbsDimension x="375" y="345"/>
+					<AbsDimension x="375" y="375"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -340,6 +340,7 @@
                         <Scripts>
                             <OnClick>
                                 SpamThrottle_SetWispBackAlpha(this:GetChecked());
+                                SpamThrottle_SetMultiWispAlpha(this:GetChecked());
                             </OnClick>
                         </Scripts>
                     </CheckButton>
@@ -352,16 +353,24 @@
                             </Anchor>
                         </Anchors>
                    </CheckButton>
+                   <CheckButton name="STMultiWisp_CheckButton" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="STWispBack_CheckButton" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="5"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                   </CheckButton>
                    <CheckButton name="STReverse_CheckButton" inherits="OptionsCheckButtonTemplate">
                    		<Anchors>
-                            <Anchor point="TOPLEFT" relativeTo="STWispBack_CheckButton" relativePoint="BOTTOMLEFT">
+                            <Anchor point="TOPLEFT" relativeTo="STMultiWisp_CheckButton" relativePoint="BOTTOMLEFT">
                                 <Offset>
                                     <AbsDimension x="-35" y="5"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
                    </CheckButton>
-                   
                 </Frames>
                 <Scripts>
 					<OnShow>
