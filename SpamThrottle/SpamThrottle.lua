@@ -23,7 +23,7 @@
 --============================
 --= Settings, Defaults, and Local Variables
 --============================
-local DebugMsg = false;
+local DebugMsg = true;
 local ErrorMsg = true;
 local DebugMode = false;
 local BlockReportMode = false;
@@ -38,6 +38,7 @@ for i=1, NUM_CHAT_WINDOWS do
 	MessageLatestTime["ChatFrame"..i] = {}
 	MessageCount["ChatFrame"..i] = {}
 end
+local MultiMessageCache = {}
 local LastPurgeTime = time()
 local LastAuditTime = time()
 local FilteredCount = 0;
@@ -54,13 +55,14 @@ Default_SpamThrottle_Config = {
 		STGoldSeller = true;
 		STFuzzy = true;
 		STChinese = true;
-		STCtrlMsgs = false;
+		STCtrlMsgs = true;
 		STYellMsgs = true;
 		STSayMsgs = true;
 		STWispMsgs = true;
 		STWispBack = false;
+		STMultiWisp = true;
 		STReverse = false;
-		STGap = 600;
+		STGap = 180;
 		STBanPerm = false;
 		STBanTimeout = 600;
 		STWhiteChannel1 = "";
@@ -68,7 +70,11 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
+Default_SpamThrottle_KeywordFilterList = {
+	"Blessed Blade of the Windseeker", "item4game", "moneyforgames",
+	"goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame",
+	"4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo",
+	"wtsitem", "golddeal", "g4wow", "power%s*lev", "power%s*lvl" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -283,7 +289,7 @@ UpdateFrame:RegisterEvent("OnUpdate");
 --============================
 -- Local function to normalize chat strings to avoid attempts to bypass SpamThrottle
 --============================
-local function SpamThrottle_strNorm(msg, Author)
+local function SpamThrottle_strNorm(msg, Author, pattern)
 	local Nmsg = "";
 	local c = "";
 	local lastc = "";
@@ -301,10 +307,12 @@ local function SpamThrottle_strNorm(msg, Author)
 	Nmsg = string.gsub(Nmsg,"0","O");
 	Nmsg = string.gsub(Nmsg,"3","E");
 	Nmsg = string.gsub(Nmsg,"...hic!","");
-	Nmsg = string.gsub(Nmsg,"%d","");
-	Nmsg = string.gsub(Nmsg,"%c","");
-	Nmsg = string.gsub(Nmsg,"%p","");
-	Nmsg = string.gsub(Nmsg,"%s","");
+	if not pattern then
+		Nmsg = string.gsub(Nmsg,"%d","");
+		Nmsg = string.gsub(Nmsg,"%c","");
+		Nmsg = string.gsub(Nmsg,"%p","");
+		Nmsg = string.gsub(Nmsg,"%s","");
+	end
 	Nmsg = string.upper(Nmsg);
 	Nmsg = string.gsub(Nmsg,"SH","S");
 	
@@ -634,6 +642,7 @@ function SpamThrottle_SetAlphas(myStatus)
 	end
 	
 	SpamThrottle_SetWispBackAlpha(myStatus);
+	SpamThrottle_SetMultiWispAlpha(myStatus);
 end
 
 function SpamThrottle_SetWispBackAlpha(myStatus)
@@ -649,6 +658,22 @@ function SpamThrottle_SetWispBackAlpha(myStatus)
 		STWispBack_CheckButton:Enable();
 	else
 		STWispBack_CheckButton:Disable();
+	end
+end
+
+function SpamThrottle_SetMultiWispAlpha(myStatus)
+	local theAlpha = 1.0;
+	
+	if not myStatus then
+		theAlpha = 0.5;
+	end
+	
+	STMultiWisp_CheckButton:SetAlpha(theAlpha);
+	
+	if myStatus then
+		STMultiWisp_CheckButton:Enable();
+	else
+		STMultiWisp_CheckButton:Disable();
 	end
 end
 
@@ -955,7 +980,7 @@ end
 --= return = 1, use graytext to de-emphasize
 --= return = 2, block altogether.
 --============================
-function SpamThrottle_ShouldBlock(msg,Author,event,channel)
+function SpamThrottle_ShouldBlock(msg,Author,event,channel,multiCheck)
 	local BlockFlag = false;
 	local NormalizedMessage = "";
 	
@@ -997,6 +1022,18 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 				end
 			end
 		end
+		if not multiCheck then
+			local remove = {}
+			for playerName, value in pairs(MultiMessageCache) do
+				if time() - value.lastMessage > 10000 then
+					SpamThrottleMessage(DebugMsg,"Removing player ",playerName," from multi-message cache (timeout).");
+					table.insert(remove, playerName)
+				end
+			end
+			for _, playerName in ipairs(remove) do
+				MultiMessageCache[playerName] = nil
+			end
+		end
 		LastPurgeTime = time();
 	end
 	
@@ -1021,8 +1058,8 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	end
 
 	for key, value in pairs(SpamThrottle_KeywordFilterList) do
-		local testval = SpamThrottle_strNorm(value,"");
-		if (string.find(NormalizedMessage,testval) ~= nil) then BlockFlag = true; end
+		local testval = SpamThrottle_strNorm(value,"",true); -- what's the point of normalizing the self-defined keywords, this removes the ability to use lua patterns. need capitals tho...
+		if (string.find(NormalizedMessage,value) ~= nil) then BlockFlag = true; end
 	end
 
 	if SpamThrottle_Config.STReverse then -- Completely different processing if this is the case
@@ -1082,6 +1119,50 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 end
 
 --============================
+--= SpamThrottle_ShouldMultiBlock - Determine whether message should be blocked
+--= based on previous messages of the same author
+--= return = 0, don't block.
+--= return = 1, use graytext to de-emphasize
+--= return = 2, block altogether.
+--============================
+function SpamThrottle_ShouldMultiBlock(msg,Author,event,channel)
+	if (SpamThrottle_Config.STActive == false or Author == UnitName("player")) then -- If filter not active or it's our message, just let it go thru
+		return 0
+	end
+
+	if MultiMessageCache[Author] == nil then
+		MultiMessageCache[Author] = {
+			lastMessage = 0,
+			history = {}
+		}
+	end
+	local playerCache = MultiMessageCache[Author]
+	playerCache.lastMessage = time()
+	local payload = {
+		msg = msg,
+		event = event,
+		channel = channel,
+		time = playerCache.lastMessage
+	}
+	table.insert(playerCache.history, payload)
+
+	-- concatenate all messages sent in the past few seconds
+	local multiMsg = ""
+	for i, pl in ipairs(playerCache.history) do
+		if time() - pl.time < 10 then
+			multiMsg = string.format("%s%s", multiMsg, pl.msg)
+		end
+	end
+	-- check if combined message should be blocked
+	local ShouldBlock = SpamThrottle_ShouldBlock(multiMsg,Author,event,channel,true)
+	if ShouldBlock then
+		MultiMessageCache[Author] = nil
+	end
+
+	return ShouldBlock
+end
+
+--============================
 --= ChatFrame_OnEvent - The main event handler
 --============================
 function SpamThrottle_ChatFrame_OnEvent(event)
@@ -1130,6 +1211,12 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 
 			local BlockType = SpamThrottle_ShouldBlock(arg1,arg2,event,arg9);
 			SpamThrottle_RecordMessage(arg1,arg2);
+
+			if SpamThrottle_Config.STMultiWisp and event == "CHAT_MSG_WHISPER" and not SpamThrottle_Config.STReverse then
+				if BlockType == 0 then
+					BlockType = SpamThrottle_ShouldMultiBlock(arg1,arg2,event,arg9);
+				end
+			end
 			
 			if SpamThrottle_Config.STWispBack and event == "CHAT_MSG_WHISPER" and not SpamThrottle_Config.STReverse then
 				if BlockType == 1 or BlockType == 2 then
