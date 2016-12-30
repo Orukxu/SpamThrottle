@@ -986,7 +986,6 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 
 	if time() - LastPurgeTime > SpamThrottle_Config.STGap then
 		SpamThrottleMessage(DebugMsg,"purging database to free memory");
-		LastPurgeTime = time();
 		for i=1, NUM_CHAT_WINDOWS do
 			for key, value in pairs(MessageTime["ChatFrame"..i]) do
 				if time() - LastPurgeTime > 300 then
@@ -998,6 +997,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 				end
 			end
 		end
+		LastPurgeTime = time();
 	end
 	
 	if string.find(msg, SpamThrottleGeneralMask) then BlockFlag = true; end
