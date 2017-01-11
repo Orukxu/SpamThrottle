@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "legacy-boost", "mmotank", "naxxgames", "nost100", "wwvokgames" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -288,6 +288,8 @@ local function SpamThrottle_strNorm(msg, Author)
 	local c = "";
 	local lastc = "";
 	local Bmsg = "";
+	local NmsgClean = "";
+	local goodChars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "4", "5", "6", "7", "8", "9" };
 
 	if (msg == nil) then return end;
 	
@@ -343,6 +345,15 @@ local function SpamThrottle_strNorm(msg, Author)
 	Nmsg = Bmsg;
 	Bmsg = "";
 
+	for i = 1, string.len(Nmsg) do
+		for j = 1, 36 do
+			if (string.sub(Nmsg,i,i) == goodChars[j]) then
+				NmsgClean = NmsgClean .. string.sub(Nmsg,i,i);
+			end
+		end
+	end
+	Nmsg = NmsgClean;
+	
 	for i = 1, string.len(Nmsg) do			-- for c in string.gmatch(Nmsg,"%u") do
 		c = string.sub(Nmsg,i,i)	
 		if (c ~= lastc) then
