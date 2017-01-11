@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "legacy-boost", "mmotank", "naxxgames", "nost100", "wwvokgames" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -342,15 +342,6 @@ local function SpamThrottle_strNorm(msg, Author)
 	end
 	Nmsg = Bmsg;
 	Bmsg = "";
-
-	for i = 1, string.len(Nmsg) do			-- for c in string.gmatch(Nmsg,"%u") do
-		c = string.sub(Nmsg,i,i)	
-		if (c ~= lastc) then
-			Bmsg = Bmsg .. c;
-		end
-		lastc = c;
-	end
-	Nmsg = Bmsg
 
 	if (Author ~= nil) then
 		Nmsg = string.upper(Author) .. Nmsg;
