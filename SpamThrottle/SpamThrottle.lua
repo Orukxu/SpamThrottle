@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "mmogo","nost100", "lovewowhaha", "hadoukenlol", "mmotank", "naxxgames", "mmo-gs.com" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "mmogo", "nost100", "lovewowhaha", "hadoukenlol", "mmotank", "naxxgames", "mmogs" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -1111,7 +1111,7 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 			
 	if arg2 then -- if this is not a server message
 		if (event == "CHAT_MSG_CHANNEL" or event == "CHAT_MSG_EMOTE" or (event == "CHAT_MSG_YELL" and SpamThrottle_Config.STYellMsgs) or (event == "CHAT_MSG_SAY" and SpamThrottle_Config.STSayMsgs) or (event == "CHAT_MSG_WHISPER" and SpamThrottle_Config.STWispMsgs)) then
-			
+						
 			-- Code to handle message goes here. Just return if we are going to ignore it.
 			local channelFound
 
@@ -1126,6 +1126,12 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 			
 			if arg1 and arg2 then	-- only execute this code once although event handler is called many times per message
 				local NormalizedMessage = SpamThrottle_strNorm(arg1, arg2);
+				
+--				if arg2 == "Tdhgc" then
+--					SpamThrottle_DecodeMessage(arg1,arg2);
+--					SpamThrottleMessage(true,"Normalized=",NormalizedMessage);
+--				end
+				
 				--if time() == MessageLatestTime[NormalizedMessage] then return end;
 			end
 
