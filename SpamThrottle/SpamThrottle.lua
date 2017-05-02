@@ -1,8 +1,8 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.11h
-	Date:		29 October 2016
-	Author:	Mopar
+	Version:	Vanilla 1.12
+	Date:		02 May 2017
+	Author:	Orukxu
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
 	Only allows a particular message to be displayed once, rather than repeated.	
@@ -68,7 +68,7 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "mmogo","nost100", "lovewowhaha", "hadoukenlol", "mmotank", "naxxgames" }
 
 Default_SpamThrottle_PlayerFilterList = {};
 
@@ -95,6 +95,7 @@ SpamThrottle_UTF8Convert[tonumber("39F",16)] = "O";
 SpamThrottle_UTF8Convert[tonumber("3A1",16)] = "P";
 SpamThrottle_UTF8Convert[tonumber("3A4",16)] = "T";
 SpamThrottle_UTF8Convert[tonumber("3A5",16)] = "Y";
+SpamThrottle_UTF8Convert[tonumber("3A6",16)] = "O";
 SpamThrottle_UTF8Convert[tonumber("3A7",16)] = "X";
 SpamThrottle_UTF8Convert[tonumber("405",16)] = "S";
 SpamThrottle_UTF8Convert[tonumber("406",16)] = "I";
@@ -1050,7 +1051,7 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	local frameName = this:GetName()
 	MessageLatestTime[frameName][NormalizedMessage] = time();
 
-	if (event == "CHAT_MSG_YELL" or event == "CHAT_MSG_SAY" or event == "CHAT_MSG_WHISPER") then
+	if (event == "CHAT_MSG_YELL" or event == "CHAT_MSG_SAY" or event == "CHAT_MSG_WHISPER" or event == "CHAT_MSG_EMOTE") then
 		if (SpamThrottle_Config.STDupFilter and MessageList[frameName][NormalizedMessage] ~= nil) then	-- this should always be true, but worth checking to avoid an error
 			if time() - MessageTime[frameName][NormalizedMessage] <= SpamThrottle_Config.STGap then
 				BlockFlag = true;
@@ -1103,13 +1104,13 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 	end;
 
 	if (SpamThrottle_Config.STCtrlMsgs) then -- Remove the left/joined channel spam and a few other notification messages
-		if (event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
+		if (event == "CHANNEL_INVITE_REQUEST" or event == "CHAT_MSG_CHANNEL_JOIN" or event == "CHAT_MSG_CHANNEL_LEAVE" or event == "CHAT_MSG_CHANNEL_NOTICE" or event == "CHAT_MSG_CHANNEL_NOTICE_USER") then		
 			return;
 		end
 	end
 			
 	if arg2 then -- if this is not a server message
-		if (event == "CHAT_MSG_CHANNEL" or (event == "CHAT_MSG_YELL" and SpamThrottle_Config.STYellMsgs) or (event == "CHAT_MSG_SAY" and SpamThrottle_Config.STSayMsgs) or (event == "CHAT_MSG_WHISPER" and SpamThrottle_Config.STWispMsgs)) then
+		if (event == "CHAT_MSG_CHANNEL" or event == "CHAT_MSG_EMOTE" or (event == "CHAT_MSG_YELL" and SpamThrottle_Config.STYellMsgs) or (event == "CHAT_MSG_SAY" and SpamThrottle_Config.STSayMsgs) or (event == "CHAT_MSG_WHISPER" and SpamThrottle_Config.STWispMsgs)) then
 			
 			-- Code to handle message goes here. Just return if we are going to ignore it.
 			local channelFound
@@ -1164,7 +1165,11 @@ function SpamThrottle_ChatFrame_OnEvent(event)
 						if event == "CHAT_MSG_WHISPER" then
 							CleanText = theColor .. "[" .. arg2 .. "] whispers: " .. CleanText .. "|r";
 						else
-							CleanText = theColor .. "[" .. arg4 .. "] [" .. arg2 .. "]: " .. CleanText .. "|r";
+							if event == "CHAT_MSG_EMOTE" then
+								CleanText = theColor .. arg2 .. " " .. CleanText .. "|r";
+							else
+								CleanText = theColor .. "[" .. arg4 .. "] [" .. arg2 .. "]: " .. CleanText .. "|r";
+							end
 						end
 					end
 				end
