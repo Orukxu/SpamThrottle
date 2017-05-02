@@ -84,8 +84,8 @@ SpamThrottleConfigObjectTooltip ={
 }
 
 SpamThrottleGSC1 = { "50g", "50G" };
-SpamThrottleGSC2 = { "\\$", "100", "\\\\", "USD", "COM", "W@W", "C@M", "G4", ">>", ">>>" };
-SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEGIT", "LEVELING", "LEVELLING", "LEVLING", "LEVILING", "LVLING", "SAFE", "SERVICE", "NOST", "COM", "SELL" };
+SpamThrottleGSC2 = { "\\$", "100", "\\\\", "USD", "COM", "W@W", "C@M", "G4", ">>", ">>>", "24/7" };
+SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEGIT", "LEVELING", "LEVELLING", "LEVLING", "LEVILING", "LVLING", "SAFE", "SERVICE", "SUPPORT", "NOST", "COM", "SELL", "QUALITY" };
 SpamThrottleGSO2 = { "PRICE", "GOLD", "CURRENCY", "MONEY", "STARS", "SKYPE", "EPIC", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES", "GREETINGS", "WEBSITE", "GOID", "CQM" };
 SpamThrottleGSUC5 = { "ITEM4" }
 SpamThrottleSWLO = { "OKO", "GAMES", "NOST", "COM" }
