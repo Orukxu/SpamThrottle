@@ -138,8 +138,8 @@ SpamThrottle_UTF8Convert[tonumber("51D",16)] = "w";
 --============================
 StaticPopupDialogs["SPAMTHROTTLE_ADD_KEYWORD"] = {
 	text = "%s";
-    button1 = "Okay";
-    button2 = "Cancel";
+    button1 = OKAY;
+    button2 = CANCEL;
     hasEditBox = 1,
     whileDead = 1,
     hideOnEscape = 1,
@@ -164,8 +164,8 @@ StaticPopupDialogs["SPAMTHROTTLE_ADD_KEYWORD"] = {
 
 StaticPopupDialogs["SPAMTHROTTLE_ADD_PLAYERBAN"] = {
 	text = "%s";
-    button1 = "Okay";
-    button2 = "Cancel";
+    button1 = OKAY;
+    button2 = CANCEL;
     hasEditBox = 1,
     whileDead = 1,
     hideOnEscape = 1,
@@ -267,7 +267,7 @@ function UFOverHookEvents()
 	if(time() - UFStartTime > 10 and UFInitialized == nil) then
 		SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent;
 		ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
-		SpamThrottleMessage(true,"Chat message hook is now enabled.");
+		SpamThrottleMessage(true,SpamThrottleChatMsg.ChatHookEnabled);
     	UFStartTime = nil;
 		UFInitialized = true;
 		this:Hide();

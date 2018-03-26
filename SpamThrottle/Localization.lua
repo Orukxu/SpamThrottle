@@ -21,6 +21,7 @@ SpamThrottleGeneralMask = "<<<----[%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%
 
 SpamThrottleChatMsg = {
 	WelcomeMsg = SpamThrottleProp.CleanLabel .. " for reducing chat spam (Slash commands: /spamthrottle or /st)";
+	ChatHookEnabled = "Chat message hook is now enabled.";
 	ObjectLoadFail = "Error! Failed to load object:";
 	ObjectSaveFail = "Error! Failed to save object:";
 	LoadDefault = "Version update detected. Options have been reset to defaults.";
@@ -89,3 +90,91 @@ SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEGIT", "LEVELING", "LEVELLING", "LEVL
 SpamThrottleGSO2 = { "PRICE", "GOLD", "CURRENCY", "MONEY", "STARS", "SKYPE", "EPIC", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES", "GREETINGS", "WEBSITE", "GOID", "CQM" };
 SpamThrottleGSUC5 = { "ITEM4" }
 SpamThrottleSWLO = { "OKO", "GAMES", "NOST", "COM" }
+
+if GetLocale() == "ruRU" then
+	-- Russian localization by Lichery
+	
+	SpamThrottleProp.Label = SpamThrottleProp.AppName .. " версия " .. SpamThrottleProp.Version;
+	SpamThrottleProp.LongLabel = SpamThrottleProp.Label .. " от " .. SpamThrottleProp.Author;
+	SpamThrottleProp.CleanLabel = SpamThrottleProp.AppName .. " от " .. SpamThrottleProp.Author;
+	SpamThrottleProp.Description = "Снижающий спам аддон для удаления повторяющихся и раздражающих сообщений чата.";
+	
+	SpamThrottleConfigMenuTitle = SpamThrottleProp.Label;
+	SpamThrottleGlobalOptions = "Настройки SpamThrottle";
+	SpamThrottleStatus = "SpamThrottle Статус & Повтор";
+	SpamThrottleKeywords = "Фильтрация ключевых слов";
+	SpamThrottlePlayerbans = "Фильтрация имен игроков (местные запреты)";
+	SpamThrottleGeneralMask = "<<<----[%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d][%a%d]";
+	
+	SpamThrottleChatMsg = {
+		WelcomeMsg = SpamThrottleProp.CleanLabel .. " для уменьшения спама чата (Команды: /spamthrottle или /st)";
+		ChatHookEnabled = "Перехват сообщений чата включен.";
+		ObjectLoadFail = "Ошибка! Не удалось загрузить объект:";
+		ObjectSaveFail = "Ошибка! Не удалось сохранить объект:";
+		LoadDefault = "Обнаружено обновление версии. Настройки сброшены до значений по умолчанию.";
+		LoadKeywordDefault = "Список фильтров ключевых слов сброшен до значений по умолчанию.";
+		LoadPlayerbanDefault = "Местный список блокировки игроков был очищен.";
+		EnterFilterKeyword = "Введите новое ключевое слово фильтрации:";
+		EnterPlayername = "Введите имя игрока:";
+		BanAdded = "добавлен в ваш местный список запрета спама SpamThrottle";
+		BanRemoved = "удален из вашего местного списка запрета спама SpamThrottle";
+		Permanent = "неограниченное время";
+		Timeout = "перерыв";
+		WhisperBack = "Ошибка доставки сообщений: ваш шепот был заблокирован аддоном.";
+	}
+	
+	SpamThrottleStatusMsg = {
+		StatusText1 = "ключевых слов в списке фильтрации слов";
+		StatusText2 = "имен игроков в списке фильтрации игроков";
+		StatusText4 = "имен игроков в списке модерируемых запретов";
+		StatusText5 = "уникальных полученных сообщений в базе данных";
+		StatusText6 = "отфильтрованных сообщений в этом сеансе";
+		StatusText7 = "Каналы \"Белого\" списка:";
+		StatusText8 = "1: ";
+		StatusText9 = "2: ";
+		StatusText10 = "3: ";
+	}
+	
+	SpamThrottleConfigObjectText ={
+		STActive = "Включить фильтрацию SpamThrottle";
+		STDupFilter = "Удалять дублир. сообщения до истечения времени ожид.";
+		STColor = "Окрашивать сообщения вместо скрытия";
+		STFuzzy = "Нечеткая фильтрация";
+		STGoldSeller = "Активная фильтрация рекламы продавцов золота включена";
+		STChinese = "Китайские символы & QQ фильтрация включена";
+		STCtrlMsgs = "Фильтрация контрольных сообщений для каналов чата";
+		STYellMsgs = "Фильтрация /y (крикнуть) сообщений включена";
+		STSayMsgs = "Фильтрация /s (сказать) сообщений включена";
+		STWispMsgs = "Фильтрация /w (шепот) сообщений включена";
+		STWispBack = "Автоматический ответ, если фильтруется";
+		STReverse = "Показывать ТОЛЬКО соответствия ключевых слов как\nв \"белом\" списке";
+		STGap = "Повтор сообщений (секунды)";
+		STBanPerm = "Постоянный";
+		STBanTimeout = "Время запрета\n(секунды)";
+	}
+	
+	SpamThrottleConfigObjectTooltip ={
+		STActive = "Включение или отключение фильтрации всех сообщений чата.";
+		STDupFilter = "Если флажок установлен, будет фильтровать повторяющиеся сообщения, не позволяя им появляться снова до тех пор, пока не пройдет число секунд, указанное в \"Повтор сообщений\".";
+		STColor = "Если флажок установлен, отфильтрованные сообщения идентифицируются путем их окраски, а не скрытия. Вы видите сообщения, но можете визуально пропустить их более легко.";
+		STFuzzy = "Включает нечеткую фильтрацию, которая захватывает очень похожие повторяющиеся сообщения, такие как отправленные пьяные символами.";
+		STGoldSeller = "Включает агрессивную фильтрацию рекламы золота.";
+		STChinese = "Фильтрует сообщения, содержащие иероглифы.";
+		STCtrlMsgs = "Фильтрует сообщения каналов для удаления спама \"присоединяется к каналу\"/\"покидает канал\".";
+		STYellMsgs = "Включает фильтрацию сообщений игроков, кричащих неподалеку.";
+		STSayMsgs = "Включает фильтрацию сообщений игроков, говорящих  неподалеку.";
+		STWispMsgs = "Включает фильтрацию сообщений игроков, шепчущих вам.";
+		STWispBack = "Автоматически отвечает вежливым шепотом обратно игроку, сообщая им, что их сообщение заблокировано.";
+		STReverse = "Изменяет смысл фильтрации SpamThrottle. Будут показаны сообщения, соответствующие ключевому слову, все остальные будут заблокированы.";
+		STGap = "Устанавливает минимальный необходимый промежуток между повторяющимися сообщениями. Если для этого игрока с момента отправки последнего сообщения не было достигнуто установленное время, сообщение будет отфильтровано.";
+		STBanPerm = "Если включено, запреты игроков остаются на месте, пока вы их не удалите. В противном случае игроки будут удалены автоматически после истечения времени ожидания для них.";
+		STBanTimeout = "Игроки будут автоматически удаляться из списка через этот промежуток времени, если постоянный запрет (выше) не установлен.";
+	}
+	
+	SpamThrottleGSC1 = { "50g", "50G" };
+	SpamThrottleGSC2 = { "\\$", "100", "\\\\", "USD", "COM", "W@W", "C@M", "G4", ">>", ">>>", "24/7" };
+	SpamThrottleGSO1 = { "ACCOUNT", "CHEAP", "LEGIT", "LEVELING", "LEVELLING", "LEVLING", "LEVILING", "LVLING", "SAFE", "SERVICE", "SUPPORT", "NOST", "COM", "SELL", "QUALITY" };
+	SpamThrottleGSO2 = { "PRICE", "GOLD", "CURRENCY", "MONEY", "STARS", "SKYPE", "EPIC", "DOLLARS", "PROFESSIONAL", "RELIABLE", "PROMOTION", "DELIVER", "NAXX", "GAMES", "GREETINGS", "WEBSITE", "GOID", "CQM" };
+	SpamThrottleGSUC5 = { "ITEM4" }
+	SpamThrottleSWLO = { "OKO", "GAMES", "NOST", "COM" }	
+end
