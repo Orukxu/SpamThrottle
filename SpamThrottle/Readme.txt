@@ -1,8 +1,8 @@
 SpamThrottle (Eliminates duplicated messages in chat channels)
 
-	Version:	Vanilla_1.12
-	Date:		02 May 2017
-	Author:		Orukxu
+	Version:	Vanilla_1.13
+	Date:		24 July 2018
+	Author:		Orukxu a.k.a. Mopar
 
 On many servers the Trade channel is the main LFG channel in use today. On full servers, many people spam the channel to increase the visibility of their messages (or just be a general nuisance) by making macros and repeating the message once every few minutes. And then there’s gold sellers. This means you spend more time reading crap and less time interacting with normal people.
 
@@ -66,6 +66,8 @@ Changes (for PRIVATE SERVER 1.12 version):
 	Vanilla_1.11 (17/08/2016): Added (optional) aggressive gold spam filtering
 
 	Vanilla_1.12 (02/05/2017): Added emote spam, additional default gold seller keywords, additional anti-obfuscation detection. Changed saved variables to per account by request. Filtering channel invite request spam if control message block is enabled.
+
+	Vanilla_1.13 (24/07/2018): Additional gold seller filtering logic
 
 Acknowledgements:
 	This addon was originally inspired by ASSFilter, created by Yewbacca.
