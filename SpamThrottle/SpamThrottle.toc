@@ -2,6 +2,6 @@
 ## Title: SpamThrottle
 ## Notes: Eliminates unnecessary and annoying chat messages
 ## Author: Orukxu
-## Version: Vanilla_1.12
+## Version: Vanilla_1.13a
 ## SavedVariables: SpamThrottle_Config SpamThrottle_KeywordFilterList SpamThrottle_PlayerFilterList SpamThrottle_PlayerBanTime
 SpamThrottle.xml
