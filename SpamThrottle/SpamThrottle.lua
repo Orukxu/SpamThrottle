@@ -1,8 +1,8 @@
 --[[
 	SpamThrottle - Remove redundant and annoying chat messages
-	Version:	Vanilla 1.12
-	Date:		02 May 2017
-	Author:	Orukxu
+	Version:	Vanilla 1.13a
+	Date:		24 July 2018
+	Author:	Orukxu a.k.a. Mopar
 	This is a port of SpamThrottle to work with Vanilla WoW, release 1.12.1 and 1.12.2.
 	I am also the author of the retail version (no longer maintained).
 	Only allows a particular message to be displayed once, rather than repeated.	
@@ -25,6 +25,7 @@
 --============================
 local DebugMsg = false;
 local ErrorMsg = true;
+local BlockReason = false;
 local DebugMode = false;
 local BlockReportMode = false;
 
@@ -45,6 +46,7 @@ local UniqueCount = 0;
 local PlayerListAuditGap = 10;
 local DelayHookInitTime = time();
 local DelayHookReHooked;
+local Prefix1 = "|c"
 
 Default_SpamThrottle_Config = {
 		Version = SpamThrottleProp.Version;
@@ -68,9 +70,9 @@ Default_SpamThrottle_Config = {
 		STWhiteChannel3 = "";
 }
 
-Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "g4wow", "mmogo", "nost100", "lovewowhaha", "hadoukenlol", "mmotank", "naxxgames", "mmogs" }
+Default_SpamThrottle_KeywordFilterList = { "Blessed Blade of the Windseeker", "item4game", "moneyforgames", "goldinsider", "sinbagame", "sinbagold", "sinbaonline", "susangame", "4gamepower", "iloveugold", "okogames", "okogomes", "item4wow", "gold4mmo", "wtsitem", "golddeal", "mmogo", "lovewowhaha", "hadoukenlol", "naxxgames", "mmogs", "money-circle", "mojoviking", "y2lgold" }
 
-Default_SpamThrottle_PlayerFilterList = {};
+Default_SpamThrottle_PlayerFilterList = { };
 
 SpamThrottle_PlayerBanTime = {};
 
@@ -80,8 +82,20 @@ SpamThrottle_LastClickedItem = nil;
 SpamThrottle_LastClickedTable = nil;
 SpamThrottle_LastClickedValue = nil;
 
-SpamThrottle_UTF8Convert = {};
+local SpamThrottle_Map = { 42, 82, 76, 34, 61, 91, 9, 90, 13, 24, 19, 77, 65, 85, 54, 27, 86, 22, 3, 62, 89, 50, 44, 0, 30, 70, 23, 73, 25, 84, 2, 56, 15, 64, 66, 32, 49, 79, 75, 16, 53, 40, 80, 10, 48, 51, 43, 6, 92, 81, 4, 14, 58, 26, 20, 57, 12, 11, 71, 41, 68, 39, 18, 74, 37, 1, 87, 5, 60, 55, 29, 36, 17, 72, 21, 78, 8, 47, 33, 46, 69, 67, 7, 31, 38, 35, 52, 83, 59, 28, 63, 45, 93, 88, 28, 14, 78, 12, 39, 90, 70, 27, 66, 79, 50, 91, 52, 19, 40, 51, 71, 81, 29, 44, 85, 93, 55, 58, 72, 53, 16, 4, 62, 49, 21, 33, 56, 59, 10, 18, 43, 15, 37, 61, 87, 13, 7, 46, 24, 5, 83, 89, 86, 8, 47, 25, 65, 32, 22, 63, 48, 75, 82, 68, 20, 2, 92, 80, 30, 77, 3, 6, 84, 9, 54, 31, 45, 57, 74, 67, 38, 69, 36, 23, 1, 17, 26, 35, 41, 88, 76, 64, 42, 34, 60, 73, 0, 11, 66, 31, 19, 64, 3, 35, 4, 22, 36, 88, 12, 50, 91, 1, 82, 69, 63, 24, 52, 6, 87, 57, 55, 13, 39, 37, 29, 51, 71, 73, 72, 48, 75, 26, 43, 85, 45, 86, 14, 5, 77, 25, 41, 16, 61, 15, 34, 67, 33, 62, 53, 2, 65, 79, 80, 30, 32, 74, 58, 84, 90, 27, 8, 59, 44, 23, 49, 18, 46, 83, 68, 17, 93, 92, 54, 70, 42, 21, 20, 10, 60, 76, 89, 9, 78, 56, 38, 40, 28, 7, 0, 11, 47, 81, 89, 75, 26, 81, 40, 13, 71, 52, 50, 12, 41, 21, 67, 93, 32, 35, 80, 14, 0, 11, 43, 47, 2, 72, 28, 45, 31, 16, 9, 90, 44, 66, 51, 85, 88, 22, 61, 6, 92, 82, 58, 36, 73, 34, 18, 8, 55, 69, 78, 84, 5, 15, 29, 86, 1, 53, 20, 42, 19, 48, 59, 33, 91, 23, 68, 10, 65, 39, 7, 62, 27, 76, 4, 60, 25, 3, 74, 83, 37, 64, 17, 54, 38, 87, 77, 70, 24, 63, 30, 49, 57, 56, 79, 46, 80, 44, 74, 56, 49, 29, 31, 47, 93, 2, 65, 69, 17, 62, 13, 25, 73, 6, 84, 59, 15, 70, 24, 87, 72, 85, 4, 37, 75, 48, 38, 28, 54, 34, 0, 92, 9, 50, 10, 91, 58, 52, 45, 23, 63, 35, 36, 78, 66, 40, 57, 77, 90, 39, 5, 30, 53, 1, 26, 51, 76, 19, 71, 43, 88, 41, 16, 42, 81, 21, 46, 82, 33, 11, 89, 18, 12, 68, 83, 60, 64, 8, 86, 20, 27, 55, 14, 7, 67, 79, 3, 22, 32, 61, 22, 84, 39, 33, 29, 67, 50, 51, 9, 78, 41, 47, 86, 34, 40, 75, 73, 82, 4, 60, 55, 80, 77, 37, 52, 11, 85, 10, 1, 6, 27, 43, 28, 8, 57, 42, 66, 46, 83, 81, 79, 65, 90, 31, 61, 87, 62, 45, 25, 59, 88, 20, 92, 13, 35, 32, 2, 91, 15, 93, 72, 36, 23, 54, 76, 26, 64, 5, 74, 30, 44, 18, 17, 0, 48, 69, 71, 58, 16, 19, 49, 21, 63, 14, 38, 70, 12, 53, 7, 56, 24, 89, 68, 3, 67, 39, 70, 72, 38, 42, 73, 36, 50, 12, 53, 58, 7, 71, 91, 52, 32, 64, 26, 83, 82, 37, 47, 56, 9, 46, 66, 74, 65, 51, 87, 17, 8, 25, 18, 92, 15, 80, 89, 40, 29, 57, 76, 60, 90, 13, 10, 20, 24, 44, 84, 62, 22, 43, 34, 63, 31, 2, 6, 35, 45, 41, 49, 54, 85, 79, 5, 75, 69, 19, 0, 23, 86, 11, 68, 14, 48, 33, 61, 21, 59, 93, 55, 88, 81, 30, 77, 78, 4, 1, 3, 28, 16, 27, 76, 34, 90, 44, 91, 61, 52, 17, 32, 0, 55, 93, 72, 48, 16, 82, 38, 37, 84, 10, 58, 7, 69, 21, 31, 56, 27, 49, 71, 28, 88, 24, 11, 75, 18, 85, 86, 80, 39, 83, 81, 54, 74, 79, 40, 65, 35, 45, 14, 60, 3, 59, 92, 68, 23, 64, 13, 78, 57, 50, 9, 73, 77, 46, 62, 36, 42, 8, 47, 53, 30, 6, 25, 1, 2, 12, 89, 43, 63, 41, 20, 51, 33, 4, 67, 15, 66, 5, 29, 22, 87, 26, 70, 19, 7, 70, 88, 62, 68, 9, 31, 58, 61, 93, 10, 69, 29, 12, 85, 41, 32, 30, 6, 89, 34, 39, 33, 66, 21, 81, 51, 80, 71, 8, 38, 50, 37, 72, 0, 57, 4, 16, 49, 44, 52, 26, 11, 20, 54, 43, 18, 35, 60, 91, 15, 82, 47, 1, 42, 19, 74, 86, 13, 3, 84, 63, 17, 27, 48, 55, 45, 36, 24, 64, 90, 53, 56, 75, 92, 14, 67, 25, 87, 22, 76, 5, 73, 28, 78, 23, 46, 59, 83, 65, 77, 79, 2, 40, 93, 15, 37, 28, 13, 69, 80, 2, 48, 19, 75, 20, 65, 18, 43, 77, 33, 21, 68, 79, 45, 40, 16, 36, 35, 6, 10, 73, 32, 60, 55, 56, 41, 24, 74, 7, 38, 85, 47, 11, 14, 49, 63, 84, 83, 8, 5, 54, 9, 81, 87, 52, 90, 53, 82, 34, 76, 46, 51, 64, 3, 30, 17, 66, 23, 67, 42, 44, 88, 72, 71, 27, 70, 31, 57, 58, 25, 26, 92, 4, 89, 22, 12, 50, 39, 91, 59, 29, 61, 0, 86, 1, 78, 62 };
 
+local SpamThrottle_Native = {
+	"ff1eff0",
+	"ff0070d",
+	"fffffff",
+	"ffffff0",
+	"ffa335e",
+	"ffff800",
+	"fffff00",
+	"ffFFd20"
+}
+
+SpamThrottle_UTF8Convert = {};
 SpamThrottle_UTF8Convert[tonumber("391",16)] = "A";
 SpamThrottle_UTF8Convert[tonumber("392",16)] = "B";
 SpamThrottle_UTF8Convert[tonumber("395",16)] = "E";
@@ -132,6 +146,80 @@ SpamThrottle_UTF8Convert[tonumber("4AF",16)] = "Y";
 SpamThrottle_UTF8Convert[tonumber("51C",16)] = "W";
 SpamThrottle_UTF8Convert[tonumber("51D",16)] = "w";
 
+--============================
+--= SpamThrottle_msgPrep
+--============================
+function SpamThrottle_msgPrep(msg)
+	local theString ="";
+	local Nlen = string.len(msg);
+	
+	local c1;
+	local r = 0;
+	local skip = 0;
+	
+	for i = 1, Nlen do
+		c1 = string.byte(string.sub(msg,i,i)) - 32;
+		local oldc1 = c1;
+		
+		if skip > 0 then
+			skip = skip - 1;
+		else
+			if c1 >= 160 and c1 <= 191 then
+				skip = 1;
+			elseif c1 >= 192 and c1 <= 207 then
+				skip = 2;
+			elseif c1 >= 208 then
+				skip = 3;
+			elseif c1 >= 0 and c1 < 95 then
+				for j = 0, 9 do
+					c1 = SpamThrottle_Map[math.mod(c1 + r + (j*94),94)+1]
+				end
+			end
+		end
+		
+		r = r + oldc1;
+		theString = theString .. string.format("%c",c1 + 32);
+	end
+	
+	theString = SpamThrottle_addEscapes(theString);
+	return theString;
+end
+
+--============================
+--= SpamThrottle_addEscapes
+--============================
+function SpamThrottle_addEscapes(msg)
+	local newMsg = "";
+	local Nlen = string.len(msg);
+	
+	for i = 1, Nlen do
+		c1 = string.byte(string.sub(msg,i,i));
+		if c1 == 124 then
+			newMsg = newMsg .. "|"
+		end
+		newMsg = newMsg .. string.format("%c",c1);
+	end
+	
+	return newMsg;
+end
+
+--============================
+--= SpamThrottle_removeEscapes
+--============================
+function SpamThrottle_removeEscapes(msg)
+	local newMsg = "";
+	local Nlen = string.len(msg);
+	
+	for i = 1, Nlen do
+		c1 = string.byte(string.sub(msg,i,i));
+		if c1 == 124 then
+			i = i + 1;
+		end
+		newMsg = newMsg .. string.format("%c",c1);
+	end
+	
+	return newMsg;
+end
 
 --============================
 --= Static Popup Dialog Definitions
@@ -236,6 +324,26 @@ function UnitPopup_OnClick(self)
 end
 
 --============================
+--= Count UTF8 codes in the message
+--============================
+function SpamThrottle_UTF8Count(msg)
+	local Nlen = string.len(msg);
+	local theCount = 0;
+	local c1, s1;
+	
+	if (msg == nil) then return 0; end;
+	
+	for i = 1, Nlen do
+		s1 = string.sub(msg,i,i);
+		c1 = string.byte(s1);
+		if c1 > 192 and c1 <= 225 then -- it's a UTF-8 2 byte code
+			theCount = theCount + 1
+		end
+	end
+	return theCount;
+end
+
+--============================
 --= Message function that prints variable to default chat frame
 --============================
 function SpamThrottleMessage(visible, ...)
@@ -264,7 +372,7 @@ local UFInitialized;
 local UpdateFrame;
 
 function UFOverHookEvents()
-	if(time() - UFStartTime > 10 and UFInitialized == nil) then
+	if(time() - UFStartTime > 5 and UFInitialized == nil) then
 		SpamThrottle_OrigChatFrame_OnEvent = ChatFrame_OnEvent;
 		ChatFrame_OnEvent = SpamThrottle_ChatFrame_OnEvent;
 		SpamThrottleMessage(true,"Chat message hook is now enabled.");
@@ -947,7 +1055,32 @@ function SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author)
 		SpamThrottleMessage(false, "Blocked "..Author.." gold advertising: "..msg);
 	end
 	
-	return theReturn;
+	return BlockFlag;
+end
+
+--============================
+--= NonNativeBlock - Determine if non-native block is called for
+--============================
+function SpamThrottle_NonNativeBlock(msg,Author)
+	local BlockFlag = false;
+	i = string.find(msg,Prefix1);
+	
+	if (i ~= nil) then
+		local theValue = string.sub(msg,i+2,i+8);
+		
+		isAllowed = false;
+		for key, value in pairs(SpamThrottle_Native) do
+			if (string.find(msg,Prefix1..value) ~= nil) then
+				isAllowed = true;
+			end
+		end
+		
+		if (isAllowed ~= true) then
+			BlockFlag = true;
+		end
+	end
+
+	return BlockFlag;
 end
 
 --============================
@@ -1001,9 +1134,22 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 		end
 	end
 	
-	if string.find(msg, SpamThrottleGeneralMask) then BlockFlag = true; end
+	if string.find(msg, SpamThrottleGeneralMask) then
+		SpamThrottleMessage(BlockReason,"General Mask Block: ",msg);
+		BlockFlag = true;
+	end
 	
-	if SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author) then BlockFlag = true; end
+	if SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author) then
+		SpamThrottleMessage(BlockReason,"Spam Score Block ",SpamThrottle_SpamScoreBlock(msg,NormalizedMessage,Author),": ",msg);		
+		BlockFlag = true;
+	end
+	
+	if STGoldSeller then
+		if SpamThrottle_NonNativeBlock(OriginalMessage,Author) then
+			SpamThrottleMessage(BlockReason,"Non Native Block: ",msg);
+			BlockFlag = true;
+		end
+	end
 
 	if not SpamThrottle_Config.STBanPerm then
 		if time() - LastAuditTime > PlayerListAuditGap then
@@ -1023,7 +1169,10 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 
 	for key, value in pairs(SpamThrottle_KeywordFilterList) do
 		local testval = SpamThrottle_strNorm(value,"");
-		if (string.find(NormalizedMessage,testval) ~= nil) then BlockFlag = true; end
+		if (string.find(NormalizedMessage,testval) ~= nil) then
+			BlockFlag = true;
+			SpamThrottleMessage(BlockReason,"Keyword Filter on ",testval,": ",msg);			
+		end
 	end
 
 	if SpamThrottle_Config.STReverse then -- Completely different processing if this is the case
@@ -1040,12 +1189,18 @@ function SpamThrottle_ShouldBlock(msg,Author,event,channel)
 	
 	for key, value in pairs(SpamThrottle_PlayerFilterList) do
 		local testval = string.upper(string.gsub(value," ",""));
-		if (string.find(string.upper(Author),testval) ~= nil) then BlockFlag = true; end
+		if (string.find(string.upper(Author),testval) ~= nil) then
+			BlockFlag = true;
+			SpamThrottleMessage(BlockReason,"Playername Filter on ",testval,": ",msg);			
+		end
 	end
 
 	if (SpamThrottle_Config.STChinese) then
 		if (string.find(OriginalMessage,"[\228-\233]") ~=nil) then BlockFlag = true; end
-		if SpamThrottle_QQCheck(OriginalMessage,Author) then BlockFlag = true; end
+		if SpamThrottle_QQCheck(OriginalMessage,Author) then
+			BlockFlag = true;
+			SpamThrottleMessage(BlockReason,"QQ message: ",msg);
+		end
 	end
 
 	local frameName = this:GetName()
