@@ -4,7 +4,7 @@
 -- Localization Strings
 
 SpamThrottleProp = {};
-SpamThrottleProp.Version = "Vanilla_1.13a";
+SpamThrottleProp.Version = "Vanilla_1.14";
 SpamThrottleProp.Author = "Mopar";
 SpamThrottleProp.AppName = "SpamThrottle";
 SpamThrottleProp.Label = SpamThrottleProp.AppName .. " version " .. SpamThrottleProp.Version;
