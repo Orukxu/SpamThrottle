@@ -773,7 +773,7 @@
                         </Scripts>
                     </ScrollFrame>
                     
-                    <Button name="SpamThrottleKeywordAdd" inherits="GameMenuButtonTemplate" text="Add">
+                    <Button name="SpamThrottleKeywordAdd" inherits="GameMenuButtonTemplate" text="IGNORE_PLAYER">
                         <Size>
                             <AbsDimension x="100" y="22"/>
                         </Size>
@@ -791,7 +791,7 @@
                         </Scripts>
                     </Button>
                     
-                    <Button name="SpamThrottleKeywordDelete" inherits="GameMenuButtonTemplate" text="Remove">
+                    <Button name="SpamThrottleKeywordDelete" inherits="GameMenuButtonTemplate" text="STOP_IGNORE">
                         <Size>
                             <AbsDimension x="100" y="22"/>
                         </Size>
@@ -1012,7 +1012,7 @@
                         </Scripts>
                     </ScrollFrame>
                     
-                    <Button name="SpamThrottlePlayerbanAdd" inherits="GameMenuButtonTemplate" text="Add Ban">
+                    <Button name="SpamThrottlePlayerbanAdd" inherits="GameMenuButtonTemplate" text="IGNORE_PLAYER">
                         <Size>
                             <AbsDimension x="100" y="22"/>
                         </Size>
@@ -1030,7 +1030,7 @@
                         </Scripts>
                     </Button>
                     
-                    <Button name="SpamThrottlePlayerbanDelete" inherits="GameMenuButtonTemplate" text="Remove">
+                    <Button name="SpamThrottlePlayerbanDelete" inherits="GameMenuButtonTemplate" text="STOP_IGNORE">
                         <Size>
                             <AbsDimension x="100" y="22"/>
                         </Size>
